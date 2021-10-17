@@ -1,6 +1,5 @@
 <template>
-  <StartingScreen />
-
+  <router-view />
   <!-- <div id="nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
@@ -9,18 +8,8 @@
 </template>
 
 <script>
-import StartingScreen from "./components/StartingScreen.vue";
-
 export default {
   name: "App",
-  components: {
-    StartingScreen,
-  },
-  created() {
-    console.log(
-      "propertyComputed will update, as this.property is now reactive."
-    );
-  },
 };
 </script>
 

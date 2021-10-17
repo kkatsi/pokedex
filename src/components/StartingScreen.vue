@@ -22,10 +22,90 @@
       </div>
       <div class="inner-circle"></div>
     </div>
+    <div class="spinner-box" v-show="loading">
+      <div class="circle-border">
+        <div class="circle-core"></div>
+      </div>
+    </div>
+  </div>
+  <div class="home">
+    <img alt="Vue logo" src="../assets/logo.png" />
   </div>
 </template>
 
+<script>
+import { gsap } from "gsap";
+
+export default {
+  data() {
+    return {
+      // showContent: false,
+      loading: true,
+    };
+  },
+  mounted() {
+    this.loading = !this.loading;
+    gsap.to(".upper-side", {
+      duration: 1,
+      ease: "power1.in",
+      transform: "translateY(-100%)",
+    });
+    gsap.to(".lower-side", {
+      duration: 1,
+      ease: "power1.in",
+      transform: "translateY(100%)",
+      onComplete: () => {
+        document.querySelector(".container").style.display = "none";
+      },
+    });
+  },
+};
+</script>
+
 <style lang="scss" scoped>
+.spinner-box {
+  width: 60vw;
+  height: 60vw;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+.circle-border {
+  width: 30vw;
+  height: 30vw;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: rgb(75, 198, 255) 100%;
+  background: linear-gradient(
+    0deg,
+    rgba(63, 249, 220, 0.1) 33%,
+    rgb(75, 198, 255) 100%
+  );
+  animation: spin 0.8s linear 0s infinite;
+}
+
+.circle-core {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 50%;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
 .small-circle {
   position: absolute;
   height: 15vw;
@@ -43,12 +123,26 @@
   background-color: rgb(182, 19, 52);
   border: 6px solid black;
 }
+
+.slide-up {
+  animation: slideup 0.8s ease-in;
+  animation-fill-mode: forwards;
+}
+.slide-down {
+  animation: slidedown 0.8s ease-in;
+  animation-fill-mode: forwards;
+}
 .container {
-  background-color: paleturquoise;
+  background-color: transparent;
   min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
   .upper-side {
     width: 100%;
     height: 50vh;
@@ -112,7 +206,7 @@
       position: absolute;
       width: 36vw;
       height: 36vw;
-      background: paleturquoise;
+      background: white;
       border-radius: 100%;
       left: 50%;
       transform: translateX(-50%);
@@ -183,7 +277,7 @@
       position: absolute;
       width: 36vw;
       height: 36vw;
-      background: paleturquoise;
+      background: white;
       border-radius: 100%;
       left: 50%;
       transform: translateX(-50%);

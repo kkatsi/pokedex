@@ -1,14 +1,15 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-  </div>
+  <StartingScreen />
 </template>
 
 <script>
 // @ is an alias to /src
+import StartingScreen from "../components/StartingScreen.vue";
 
 export default {
   name: "Home",
-  components: {},
+  components: {
+    StartingScreen,
+  },
 };
 </script>
