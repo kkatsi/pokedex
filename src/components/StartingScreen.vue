@@ -10,6 +10,8 @@
         <div class="tiny-circle"></div>
       </div>
       <div class="inner-circle"></div>
+      <div class="black-bottom-line"></div>
+      <div class="small-black"></div>
     </div>
     <div class="lower-side">
       <div class="big-left-circle"></div>
@@ -21,6 +23,8 @@
         <div class="tiny-circle"></div>
       </div>
       <div class="inner-circle"></div>
+      <div class="black-bottom-line"></div>
+      <div class="small-black"></div>
     </div>
     <div class="spinner-box" v-show="loading">
       <div class="circle-border">
@@ -28,36 +32,12 @@
       </div>
     </div>
   </div>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-  </div>
 </template>
 
 <script>
-import { gsap } from "gsap";
-
 export default {
-  data() {
-    return {
-      // showContent: false,
-      loading: true,
-    };
-  },
-  mounted() {
-    this.loading = !this.loading;
-    gsap.to(".upper-side", {
-      duration: 1,
-      ease: "power1.in",
-      transform: "translateY(-100%)",
-    });
-    gsap.to(".lower-side", {
-      duration: 1,
-      ease: "power1.in",
-      transform: "translateY(100%)",
-      onComplete: () => {
-        document.querySelector(".container").style.display = "none";
-      },
-    });
+  props: {
+    loading: Boolean,
   },
 };
 </script>
@@ -83,11 +63,11 @@ export default {
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background: rgb(75, 198, 255) 100%;
+  background: maroon 100%;
   background: linear-gradient(
     0deg,
     rgba(63, 249, 220, 0.1) 33%,
-    rgb(75, 198, 255) 100%
+    rgba(128, 0, 0, 0.7) 100%
   );
   animation: spin 0.8s linear 0s infinite;
 }
@@ -95,7 +75,7 @@ export default {
 .circle-core {
   width: 100%;
   height: 100%;
-  background-color: white;
+  background-color: transparent;
   border-radius: 50%;
 }
 @keyframes spin {
@@ -133,6 +113,7 @@ export default {
   animation-fill-mode: forwards;
 }
 .container {
+  z-index: 9999999999;
   background-color: transparent;
   min-height: 100vh;
   width: 100%;
@@ -140,7 +121,7 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   overflow: hidden;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   .upper-side {
@@ -212,6 +193,26 @@ export default {
       transform: translateX(-50%);
       bottom: -17vw;
     }
+    .black-bottom-line {
+      position: absolute;
+      width: 50%;
+
+      height: 3px;
+      background: black;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+    }
+    .small-black {
+      position: absolute;
+      width: 10vw;
+      height: 10vw;
+      background: black;
+      border-radius: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -5vw;
+    }
   }
   .lower-side {
     width: 100%;
@@ -282,6 +283,26 @@ export default {
       left: 50%;
       transform: translateX(-50%);
       top: -17vw;
+    }
+    .black-bottom-line {
+      position: absolute;
+      width: 50%;
+
+      height: 3px;
+      background: black;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
+    }
+    .small-black {
+      position: absolute;
+      width: 10vw;
+      height: 10vw;
+      background: black;
+      border-radius: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -5vw;
     }
   }
 }

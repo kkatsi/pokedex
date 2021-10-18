@@ -1,4 +1,6 @@
 <template>
+  <StartingScreen v-bind:loading="loading" />
+  <Header />
   <router-view />
   <!-- <div id="nav">
     <router-link to="/">Home</router-link> |
@@ -8,21 +10,59 @@
 </template>
 
 <script>
+import StartingScreen from "./components/StartingScreen.vue";
+import Header from "./components/Header.vue";
+import { gsap } from "gsap";
+
 export default {
   name: "App",
+  components: {
+    StartingScreen,
+    Header,
+  },
+  data() {
+    return {
+      loading: true,
+    };
+  },
+  mounted() {
+    window.addEventListener("load", () => {
+      this.loading = !this.loading;
+      gsap.to(".upper-side", {
+        duration: 1,
+        ease: "power1.in",
+        transform: "translateY(-100%)",
+      });
+      gsap.to(".lower-side", {
+        duration: 1,
+        ease: "power1.in",
+        transform: "translateY(100%)",
+        onComplete: () => {
+          document.querySelector(".container").style.display = "none";
+        },
+      });
+    });
+  },
 };
 </script>
 
 <style lang="scss">
+@import "./assets/Styles/custom.css";
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 body {
   margin: 0;
 }
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  & * {
+    font-family: "Raleway", sans-serif;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
 }
 
 #nav {
