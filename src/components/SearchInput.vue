@@ -1,9 +1,32 @@
 <template>
   <div class="container">
     <div class="black-line"></div>
-    <input type="text" placeholder="Search for pokemon name or code..." />
+    <div class="input-container">
+      <input type="text" placeholder="Search for pokemon name or code..." />
+      <button @click="search" class="icon">
+        <search-icon></search-icon>
+      </button>
+    </div>
   </div>
 </template>
+
+<script>
+import { SearchIcon } from "vue-feather-icons";
+import featCompt from "../lib/feather";
+
+featCompt(SearchIcon);
+
+export default {
+  components: {
+    SearchIcon,
+  },
+  methods: {
+    search() {
+      console.log("clicked");
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 .container {
@@ -21,26 +44,50 @@
   //     transform: translateY(-50%);
   //     box-shadow: 0px -5px 10px #888, 0px 5px 10px maroon;
   //   }
-  input {
-    border-radius: 100000px;
+  .input-container {
     position: absolute;
-    background: whitesmoke;
     left: 50%;
     top: 50%;
     height: 4vh;
     width: 50%;
     max-width: 500px;
     transform: translate(-50%, -50%);
-    border: 0;
-    padding: 10px 30px;
-    font-size: 1.3rem;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border-radius: 100000px;
     box-shadow: -1px -5px 12px #888, -1px 5px 12px #800000;
-    &::placeholder {
-      font-style: italic;
+    overflow: hidden;
+    .icon {
+      background: #25348a;
+      border: 0;
+      cursor: pointer;
+      width: 15%;
+      color: white;
+      height: 100%;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      svg {
+        transform: scale(1.3);
+      }
     }
-    &:focus-visible {
-      outline: 0;
+    input {
+      background: whitesmoke;
+      width: 85%;
+      height: 100%;
+      position: relative;
+      border: 0;
+      padding: 10px 30px;
+      font-size: 1.3rem;
+      font-weight: bold;
+
+      &::placeholder {
+        font-style: italic;
+      }
+      &:focus-visible {
+        outline: 0;
+      }
     }
   }
 }

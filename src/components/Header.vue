@@ -3,7 +3,7 @@
     <div class="animatedLine"></div>
     <div class="animatedLine"></div>
     <div class="animatedLine"></div>
-    <router-link to="/" tag="h1"><h1>Pokedex</h1></router-link>
+    <router-link to="/" tag="h1"><h1>Pokédex</h1></router-link>
   </div>
 </template>
 
@@ -22,30 +22,17 @@
   }
   h1 {
     text-align: center;
-    font-size: 5rem;
+    font-size: 6rem;
     font-family: Pokemon !important;
     margin: 0;
-    letter-spacing: 5px;
-    //   text-shadow: -1px 0 black, 0 3px black, 3px 0 black, 0 -1px black;
-    background: #960202;
-    background: -webkit-radial-gradient(
-      circle farthest-corner at left center,
-      #960202 50%,
-      #000000 100%
-    );
-    background: -moz-radial-gradient(
-      circle farthest-corner at left center,
-      #960202 50%,
-      #000000 100%
-    );
-    background: radial-gradient(
-      circle farthest-corner at left center,
-      #960202 50%,
-      #000000 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(3px 4px rgb(133, 133, 133));
+    letter-spacing: 0px;
+    z-index: 99;
+    // @include stroke(4, #25348a);
+    // text-shadow: -1px 0 black, 0 3px black, 3px 0 black, 0 -1px black;
+    // color: #feca1b;
+    -webkit-text-fill-color: #feca1b;
+    -webkit-text-stroke-color: #25348a;
+    -webkit-text-stroke-width: 3px;
   }
 
   .animatedLine {
