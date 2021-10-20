@@ -2,7 +2,13 @@
   <div class="container">
     <div class="black-line"></div>
     <div class="input-container">
-      <input type="text" placeholder="Search for pokemon name or code..." />
+      <input
+        v-model="value"
+        type="text"
+        ref="searchText"
+        @keyup="handleChange"
+        placeholder="Search for pokemon name or code..."
+      />
       <button @click="search" class="icon">
         <search-icon></search-icon>
       </button>
@@ -20,9 +26,20 @@ export default {
   components: {
     SearchIcon,
   },
+  data() {
+    return {
+      value: "",
+    };
+  },
   methods: {
     search() {
-      console.log("clicked");
+      this.$emit("search", this.value);
+    },
+    handleChange(e) {
+      var code = e.keyCode ? e.keyCode : e.which;
+      if (code == 13) {
+        this.search();
+      }
     },
   },
 };

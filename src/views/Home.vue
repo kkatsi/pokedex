@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <SearchInput />
+    <SearchInput @search="searchPokemons" />
     <div class="cont-fluid">
       <div class="row">
         <div
@@ -20,7 +20,16 @@
             />
             <div
               class="background"
-              :style="{ background: findColor(pokemon.types[0].type.name) }"
+              :style="[
+                pokemon.types.length > 1
+                  ? {
+                      background: findColor(pokemon.types[0].type.name),
+                      background: `linear-gradient(100deg, ${findColor(
+                        pokemon.types[0].type.name
+                      )} 0%, ${findColor(pokemon.types[1].type.name)} 100%)`,
+                    }
+                  : { background: findColor(pokemon.types[0].type.name) },
+              ]"
             ></div>
             <div class="content">
               <span class="id">{{ pokemon.id }}</span>
@@ -47,7 +56,16 @@
             />
             <div
               class="background"
-              :style="{ background: findColor(pokemon.types[0].type.name) }"
+              :style="[
+                pokemon.types.length > 1
+                  ? {
+                      background: findColor(pokemon.types[0].type.name),
+                      background: `linear-gradient(100deg, ${findColor(
+                        pokemon.types[0].type.name
+                      )} 0%, ${findColor(pokemon.types[1].type.name)} 100%)`,
+                    }
+                  : { background: findColor(pokemon.types[0].type.name) },
+              ]"
             ></div>
             <div class="content">
               <span class="id">{{ pokemon.id }}</span>
@@ -92,10 +110,12 @@ export default {
   data() {
     return {
       pokemons: [],
+      tempPoke: [],
       templ: [],
       page: 1,
       perPage: 20,
       loading: false,
+      limit: 1118,
     };
   },
   methods: {
@@ -164,17 +184,25 @@ export default {
     scrollTrigger() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          if (entry.intersectionRatio > 0) {
+          if (
+            entry.intersectionRatio > 0 &&
+            this.limit > this.page * this.perPage
+          ) {
             this.page += 1;
-            this.getMorePokemons(this.page, this.perPage);
+            this.tempPoke.length === 0
+              ? this.getMorePokemons(this.page, this.perPage)
+              : this.paginatePokemons(this.page, this.perPage);
           }
         });
       });
-      observer.observe(this.$refs.scrollTrigger);
+
+      const trigger = this.$refs.scrollTrigger;
+      trigger && observer.observe(trigger);
     },
     async getMorePokemons(page, perPage) {
       const promises1 = [];
       const promises2 = [];
+      const temp = [];
       const offset = perPage * page;
       const start = offset - perPage + 1;
       this.loading = true;
@@ -187,14 +215,115 @@ export default {
 
       Promise.all(promises1).then((results) => {
         Promise.all(promises2).then((res) => {
+          res.forEach((pok) => {
+            const english = pok.flavor_text_entries.find((lang) => {
+              return lang.language.name == "en";
+            });
+            // console.log(english);
+            const singleLang = english.flavor_text;
+            temp.push(singleLang);
+          });
           results.map((r, index) => {
-            return (r.description =
-              res[index].flavor_text_entries[0].flavor_text);
+            return (r.description = temp[index]);
           });
           this.pokemons = [...this.pokemons, ...results];
           this.loading = false;
         });
       });
+    },
+    async searchPokemons(searchText) {
+      // console.log(searchText);
+      const offset = 20;
+      const start = 0;
+      this.loading = true;
+      this.pokemons = [];
+
+      //fetch all pokemons
+      const allUrl = "https://pokeapi.co/api/v2/pokemon?limit=1118";
+      const res = await fetch(allUrl);
+      let data = await res.json();
+      data = data.results;
+      console.log(data);
+      searchText = searchText.toLowerCase();
+      data = data.filter((pokemon) => pokemon.name.startsWith(searchText));
+      this.tempPoke = data;
+      this.limit = data.length;
+      console.log(data);
+      this.loading = false;
+      this.paginatePokemons(this.page, this.perPage);
+    },
+    paginatePokemons(page, perPage) {
+      const promises1 = [];
+      const promises2 = [];
+      const offset = page * perPage;
+      const start = offset - perPage;
+      const data = [...this.tempPoke];
+      const temp = [];
+      this.loading = true;
+      if (offset < data.length) {
+        for (let i = start; i < offset; i++) {
+          const url1 = `https://pokeapi.co/api/v2/pokemon/${data[i].name}/`;
+          const url2 = `https://pokeapi.co/api/v2/pokemon-species/${data[i].name}/`;
+          promises1.push(fetch(url1).then((res) => res.json()));
+          promises2.push(fetch(url2).then((res) => res.json()));
+        }
+        Promise.all(promises1).then((results) => {
+          Promise.allSettled(promises2)
+            .then((res) => {
+              res.forEach((pok) => {
+                if (pok.status === "fulfilled") {
+                  const english = pok.value.flavor_text_entries.find((lang) => {
+                    return lang.language.name == "en";
+                  });
+                  const singleLang = english.flavor_text;
+                  temp.push(singleLang);
+                } else {
+                  temp.push("");
+                }
+              });
+              results.map((r, index) => {
+                return (r.description = temp[index]);
+              });
+              console.log(results);
+              this.pokemons = [...this.pokemons, ...results];
+              this.loading = false;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+      } else {
+        for (let i = start; i < data.length; i++) {
+          const url1 = `https://pokeapi.co/api/v2/pokemon/${data[i].name}/`;
+          const url2 = `https://pokeapi.co/api/v2/pokemon-species/${data[i].name}/`;
+          promises1.push(fetch(url1).then((res) => res.json()));
+          promises2.push(fetch(url2).then((res) => res.json()));
+        }
+        Promise.all(promises1).then((results) => {
+          Promise.allSettled(promises2)
+            .then((res) => {
+              res.forEach((pok) => {
+                if (pok.status === "fulfilled") {
+                  const english = pok.value.flavor_text_entries.find((lang) => {
+                    return lang.language.name == "en";
+                  });
+                  const singleLang = english.flavor_text;
+                  temp.push(singleLang);
+                } else {
+                  temp.push("");
+                }
+              });
+              results.map((r, index) => {
+                return (r.description = temp[index]);
+              });
+              this.pokemons = [...results];
+              this.loading = false;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+      }
     },
     styleAndAnimateCards() {
       document.querySelectorAll(".card-container").forEach((element) => {
@@ -216,7 +345,7 @@ export default {
         element.removeEventListener("mouseenter", () => {});
         element.addEventListener("mouseenter", () => {
           tlPokemonBounce.play();
-          const color = element.querySelector(".background").style.background;
+          const color = element.querySelector(".tag").style.background;
           element.style.setProperty(
             "box-shadow",
             `0 10px 20px ${color},0 6px 6px ${color}`,
@@ -310,6 +439,7 @@ export default {
         height: 100%;
         border-radius: 1rem;
         position: relative;
+        min-height: 410px;
         background: whitesmoke;
 
         margin-left: 7%;
@@ -323,9 +453,12 @@ export default {
           position: absolute;
           width: auto;
           height: 76%;
-          top: -80px;
-          left: 50%;
-          transform: translateX(-50%);
+          top: -85px;
+          left: 0;
+          right: 0;
+          margin: auto;
+          // left: 50%;
+          // transform: translateX(-50%);
         }
         .background {
           width: 100%;
@@ -352,6 +485,7 @@ export default {
             font-weight: 300;
             font-size: 1rem;
             color: rgb(97, 97, 97);
+            margin-top: 0.5rem;
           }
           .description {
             margin-top: 0.5rem;
