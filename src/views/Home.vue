@@ -8,83 +8,85 @@
           v-for="(pokemon, index) in pokemons"
           class="col-xs-12 col-md-6 col-xl-4 col-xxl-3 card"
         >
-          <div
-            class="card-container"
+          <router-link
+            :to="`/${pokemon.name}`"
             v-if="index === pokemons.length - 1"
-            ref="scrollTrigger"
-            id="scroll-trigger"
           >
-            <img
-              :src="pokemon.sprites.other['official-artwork'].front_default"
-              :alt="pokemon.name"
-            />
-            <div
-              class="background"
-              :style="[
-                pokemon.types.length > 1
-                  ? {
-                      background: findColor(pokemon.types[0].type.name),
-                      background: `linear-gradient(100deg, ${findColor(
-                        pokemon.types[0].type.name
-                      )} 0%, ${findColor(pokemon.types[1].type.name)} 100%)`,
-                    }
-                  : { background: findColor(pokemon.types[0].type.name) },
-              ]"
-            ></div>
-            <div class="content">
-              <span class="id">{{ pokemon.id }}</span>
-              <span class="name">{{ pokemon.name }}</span>
-              <span class="description" style="white-space: pre-wrap">{{
-                pokemon.description
-              }}</span>
-              <div class="types">
-                <span
-                  :key="type.slot"
-                  v-for="type in pokemon.types"
-                  class="tag"
-                  :style="{ background: findColor(type.type.name) }"
-                >
-                  {{ type.type.name }}
-                </span>
+            <div class="card-container" ref="scrollTrigger" id="scroll-trigger">
+              <img
+                :src="pokemon.sprites.other['official-artwork'].front_default"
+                :alt="pokemon.name"
+              />
+              <div
+                class="background"
+                :style="[
+                  pokemon.types.length > 1
+                    ? {
+                        background: findColor(pokemon.types[0].type.name),
+                        background: `linear-gradient(100deg, ${findColor(
+                          pokemon.types[0].type.name
+                        )} 0%, ${findColor(pokemon.types[1].type.name)} 100%)`,
+                      }
+                    : { background: findColor(pokemon.types[0].type.name) },
+                ]"
+              ></div>
+              <div class="content">
+                <span class="id">{{ pokemon.id }}</span>
+                <span class="name">{{ pokemon.name }}</span>
+                <span class="description" style="white-space: pre-wrap">{{
+                  pokemon.description
+                }}</span>
+                <div class="types">
+                  <span
+                    :key="type.slot"
+                    v-for="type in pokemon.types"
+                    class="tag"
+                    :style="{ background: findColor(type.type.name) }"
+                  >
+                    {{ type.type.name }}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="card-container" v-else>
-            <img
-              :src="pokemon.sprites.other['official-artwork'].front_default"
-              :alt="pokemon.name"
-            />
-            <div
-              class="background"
-              :style="[
-                pokemon.types.length > 1
-                  ? {
-                      background: findColor(pokemon.types[0].type.name),
-                      background: `linear-gradient(100deg, ${findColor(
-                        pokemon.types[0].type.name
-                      )} 0%, ${findColor(pokemon.types[1].type.name)} 100%)`,
-                    }
-                  : { background: findColor(pokemon.types[0].type.name) },
-              ]"
-            ></div>
-            <div class="content">
-              <span class="id">{{ pokemon.id }}</span>
-              <span class="name">{{ pokemon.name }}</span>
-              <span class="description" style="white-space: pre-wrap">{{
-                pokemon.description
-              }}</span>
-              <div class="types">
-                <span
-                  :key="type.slot"
-                  v-for="type in pokemon.types"
-                  class="tag"
-                  :style="{ background: findColor(type.type.name) }"
-                >
-                  {{ type.type.name }}
-                </span>
+          </router-link>
+          <router-link :to="`/${pokemon.name}`" v-else>
+            <div class="card-container">
+              <img
+                :src="pokemon.sprites.other['official-artwork'].front_default"
+                :alt="pokemon.name"
+              />
+              <div
+                class="background"
+                :style="[
+                  pokemon.types.length > 1
+                    ? {
+                        background: findColor(pokemon.types[0].type.name),
+                        background: `linear-gradient(100deg, ${findColor(
+                          pokemon.types[0].type.name
+                        )} 0%, ${findColor(pokemon.types[1].type.name)} 100%)`,
+                      }
+                    : { background: findColor(pokemon.types[0].type.name) },
+                ]"
+              ></div>
+              <div class="content">
+                <span class="id">{{ pokemon.id }}</span>
+                <span class="name">{{ pokemon.name }}</span>
+                <span class="description" style="white-space: pre-wrap">{{
+                  pokemon.description
+                }}</span>
+                <div class="types">
+                  <span
+                    :key="type.slot"
+                    v-for="type in pokemon.types"
+                    class="tag"
+                    :style="{ background: findColor(type.type.name) }"
+                  >
+                    {{ type.type.name }}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
       <div class="spinner-box" v-show="loading">
@@ -182,12 +184,14 @@ export default {
       return result;
     },
     scrollTrigger() {
+      if (this.loading) return;
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (
             entry.intersectionRatio > 0 &&
             this.limit > this.page * this.perPage
           ) {
+            console.log("triggerd");
             this.page += 1;
             this.tempPoke.length === 0
               ? this.getMorePokemons(this.page, this.perPage)
@@ -195,7 +199,6 @@ export default {
           }
         });
       });
-
       const trigger = this.$refs.scrollTrigger;
       trigger && observer.observe(trigger);
     },
@@ -237,6 +240,7 @@ export default {
       const start = 0;
       this.loading = true;
       this.pokemons = [];
+      this.page = 1;
 
       //fetch all pokemons
       const allUrl = "https://pokeapi.co/api/v2/pokemon?limit=1118";
@@ -316,7 +320,7 @@ export default {
               results.map((r, index) => {
                 return (r.description = temp[index]);
               });
-              this.pokemons = [...results];
+              this.pokemons = [...this.pokemons, ...results];
               this.loading = false;
             })
             .catch((error) => {
@@ -435,85 +439,120 @@ export default {
       flex-wrap: wrap;
       align-self: normal;
       margin-bottom: 5rem;
-      .card-container {
-        height: 100%;
-        border-radius: 1rem;
-        position: relative;
-        min-height: 410px;
-        background: whitesmoke;
+      padding-left: 2.2%;
+      padding-right: 2.2%;
+      a {
+        text-decoration: none;
+        cursor: initial;
+        .card-container {
+          height: 100%;
+          cursor: pointer;
+          border-radius: 1rem;
+          position: relative;
+          min-height: 410px;
+          background: whitesmoke;
 
-        margin-left: 7%;
-        margin-right: 7%;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
-          0 6px 6px rgba(0, 0, 0, 0.23);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        img {
-          position: absolute;
-          width: auto;
-          height: 76%;
-          top: -85px;
-          left: 0;
-          right: 0;
-          margin: auto;
-          // left: 50%;
-          // transform: translateX(-50%);
-        }
-        .background {
-          width: 100%;
-          height: 200px;
-          border-top-right-radius: 1rem;
-          border-top-left-radius: 1rem;
-        }
-        .content {
-          width: 100%;
-          flex-grow: 1;
-          padding: 1rem;
+          // margin-left: 7%;
+          // margin-right: 7%;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+            0 6px 6px rgba(0, 0, 0, 0.23);
           display: flex;
           flex-direction: column;
           align-items: center;
-          // justify-content: center;
-          .name {
-            margin-top: 0.3rem;
-            font-weight: 700;
-            font-size: 1.3rem;
-            text-transform: capitalize;
-            color: rgb(37, 37, 37);
+          &::after {
+            content: "Click card for more information";
+            background: rgb(34, 34, 34);
+            position: absolute;
+            width: 25px;
+            text-align: center;
+            padding-right: 5px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            color: white;
+            border-top-right-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            height: 90%;
+            top: 50%;
+            right: 0;
+            transform: translate(0, -50%);
+            z-index: -1;
+            transition: all 0.5s ease-in-out;
           }
-          .id {
-            font-weight: 300;
-            font-size: 1rem;
-            color: rgb(97, 97, 97);
-            margin-top: 0.5rem;
+          &:hover::after {
+            transform: translate(100%, -50%);
           }
-          .description {
-            margin-top: 0.5rem;
-            font-style: italic;
-            font-weight: 400;
-            font-size: 0.8rem;
-            color: rgb(78, 78, 78);
+          img {
+            position: absolute;
+            width: auto;
+            height: 70%;
+            top: -75px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            // left: 50%;
+            // transform: translateX(-50%);
           }
-          .types {
-            display: flex;
-            flex-wrap: wrap;
-            padding-top: 1rem;
-            align-items: center;
-            justify-content: space-around;
-            margin-top: auto;
+          .background {
             width: 100%;
-            .tag {
-              min-width: 45%;
-              color: whitesmoke;
-              font-size: 1rem;
-              font-weight: 400;
-              padding: 0.5rem;
-              border-radius: 0.5rem;
+            height: 200px;
+            border-top-right-radius: 1rem;
+            border-top-left-radius: 1rem;
+          }
+          .content {
+            width: 100%;
+            flex-grow: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            // justify-content: center;
+            .name {
+              margin-top: 0.3rem;
+              font-weight: 700;
+              font-size: 1.3rem;
               text-transform: capitalize;
+              color: rgb(37, 37, 37);
+            }
+            .id {
+              font-weight: 300;
+              font-size: 1rem;
+              color: rgb(97, 97, 97);
+              margin-top: 0.5rem;
+            }
+            .description {
+              margin-top: 0.5rem;
+              font-style: italic;
+              font-weight: 400;
+              font-size: 0.8rem;
+              color: rgb(78, 78, 78);
+            }
+            .types {
+              display: flex;
+              flex-wrap: wrap;
+              padding-top: 1rem;
+              align-items: center;
+              justify-content: space-around;
+              margin-top: auto;
+              width: 100%;
+              .tag {
+                min-width: 45%;
+                color: whitesmoke;
+                font-size: 1rem;
+                font-weight: 400;
+                padding: 0.5rem;
+                border-radius: 0.5rem;
+                text-transform: capitalize;
+              }
             }
           }
         }
       }
+    }
+  }
+  @media (max-width: 1400px) {
+    img {
+      height: 76%;
+      top: -85px;
     }
   }
 }

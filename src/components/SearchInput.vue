@@ -65,7 +65,7 @@ export default {
     position: absolute;
     left: 50%;
     top: 50%;
-    height: 4vh;
+    height: 5vh;
     width: 50%;
     max-width: 500px;
     transform: translate(-50%, -50%);

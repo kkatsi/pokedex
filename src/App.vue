@@ -1,7 +1,7 @@
 <template>
   <StartingScreen v-bind:loading="loading" />
   <Header />
-  <router-view />
+  <router-view :key="$route.params" />
   <!-- <div id="nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>

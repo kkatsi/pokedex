@@ -31,7 +31,7 @@
     // text-shadow: -1px 0 black, 0 3px black, 3px 0 black, 0 -1px black;
     // color: #feca1b;
     -webkit-text-fill-color: #feca1b;
-    -webkit-text-stroke-color: #25348a;
+    -webkit-text-stroke-color: #3c4ca8;
     -webkit-text-stroke-width: 3px;
   }
 
