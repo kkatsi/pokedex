@@ -1,5 +1,421 @@
 <template>
-  <div class="about">
-    <h1>{{ $route.params.pokeName }}</h1>
+  <div class="pokemon">
+    <div class="electric" v-show="showNow">
+      <img src="../assets/Images/1.png" alt="" class="thunder" />
+
+      <img src="../assets/Images/2.png" alt="" class="thunder" />
+    </div>
+    <img
+      :src="pokemon.sprites.other['official-artwork'].front_default"
+      :alt="pokemon.name"
+      class="pokemon-image"
+      v-if="pokemon"
+    />
+    <transition name="fade">
+      <PokemonInfo
+        :class="{ openDown: showNow }"
+        v-if="pokemon"
+        v-show="showNow"
+        :pokemon="pokemon"
+        :findColor="findColor"
+      />
+    </transition>
+
+    <div class="pokemon-basic-info" v-if="pokemon" v-show="showNow"></div>
+    <div class="pokeball-container">
+      <picture>
+        <img
+          src="../assets/Images/pokeball.png"
+          class="pokeball"
+          alt="pokeball"
+        />
+      </picture>
+    </div>
+    <img src="../assets/Images/flash.png" alt="flash" class="flash-image" />
   </div>
 </template>
+
+<script>
+import gsap from "gsap";
+import PokemonInfo from "../components/PokemonInfo.vue";
+
+export default {
+  data() {
+    return {
+      showNow: false,
+      pokemon: null,
+    };
+  },
+  components: {
+    PokemonInfo,
+  },
+  methods: {
+    animateELements() {
+      if (!this.showNow) return;
+      const info = document.querySelector(".pokemon-basic-info");
+      var tlTest = gsap.timeline({ repeat: 0 }).to(info, {
+        duration: 1,
+        // y: "+=380",
+        opacity: 1,
+        ease: "Expo.easeOut",
+      });
+    },
+    pokeballAndPokemonAnimation() {
+      if (!this.pokemon) return;
+      setTimeout(() => {
+        this.showNow = true;
+      }, 3900);
+      const pokeball = document.querySelector(".pokeball-container img");
+      const pokemon = document.querySelector(".pokemon-image");
+      const info = document.querySelector(".pokemon-basic-info");
+
+      var tlBasicAnimation = gsap.timeline();
+      tlBasicAnimation.delay(0.5);
+      tlBasicAnimation
+        .to(pokeball, {
+          y: "+=50",
+          duration: 1,
+          ease: "Bounce.easeOut",
+        })
+        .to(document.querySelector("picture"), {
+          duration: 0.5,
+          opacity: 0,
+          onComplete: function() {
+            document.querySelector(".flash-image")?.classList.add("flash");
+          },
+        })
+        .to(
+          pokemon,
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "Sine.easeInOut",
+          },
+          "<+=1.2"
+        )
+        .to(info, {
+          duration: 1,
+          // y: "+=380",
+          opacity: 1,
+          ease: "Expo.easeOut",
+          onComplete: function() {
+            document
+              .querySelectorAll(".electric img")[0]
+              ?.classList.add("flashThunder");
+            setTimeout(() => {
+              document
+                .querySelectorAll(".electric img")[1]
+                ?.classList.add("flashThunder");
+            }, 500);
+          },
+        });
+    },
+
+    findColor(type) {
+      let result;
+      switch (type) {
+        case "grass":
+          result = "#78c850";
+          break;
+        case "normal":
+          result = "#a8a878";
+          break;
+        case "fire":
+          result = "#f08030";
+          break;
+        case "fighting":
+          result = "#c03028";
+          break;
+        case "water":
+          result = "#6890f0";
+          break;
+        case "flying":
+          result = "#a890f0";
+          break;
+        case "poison":
+          result = "#a040a0";
+          break;
+        case "electric":
+          result = "#f8d030";
+          break;
+        case "ground":
+          result = "#e0c068";
+          break;
+        case "psychic":
+          result = "#f85888";
+          break;
+        case "rock":
+          result = "#b8a038";
+          break;
+        case "ice":
+          result = "#98d8d8";
+          break;
+        case "bug":
+          result = "#a8b820";
+          break;
+        case "dragon":
+          result = "#7038f8";
+          break;
+        case "ghost":
+          result = "#705898";
+          break;
+        case "dark":
+          result = "#705848";
+          break;
+        case "steel":
+          result = "#b8b8d0";
+          break;
+        case "fairy":
+          result = "#ee99ac";
+          break;
+        default:
+          break;
+      }
+      return result;
+    },
+    // async getPokemon(name) {
+    //   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    //   const data = await res.json();
+    //   console.log(data);
+    //   this.pokemon = data;
+    // },
+    async getPokemon(name) {
+      const promises1 = [];
+      const promises2 = [];
+      // this.loading = true;
+
+      const url1 = `https://pokeapi.co/api/v2/pokemon/${name}`;
+      const url2 = `https://pokeapi.co/api/v2/pokemon-species/${name}/`;
+      promises1.push(fetch(url1).then((res) => res.json()));
+      promises2.push(fetch(url2).then((res) => res.json()));
+
+      Promise.all(promises1).then((results) => {
+        Promise.all(promises2).then((res) => {
+          // res.forEach((pok) => {
+          //   const english = pok.flavor_text_entries.find((lang) => {
+          //     return lang.language.name == "en";
+          //   });
+          //   // console.log(english);
+          //   const singleLang = english.flavor_text;
+          //   temp.push(singleLang);
+          // });
+
+          results[0].speciesDetails = res[0];
+          console.log(results[0]);
+          this.pokemon = results[0];
+          // this.loading = false;
+        });
+      });
+    },
+  },
+  updated() {
+    this.pokeballAndPokemonAnimation();
+  },
+  async created() {
+    await this.getPokemon(this.$route.params.pokeName);
+  },
+  mounted() {
+    this.$nextTick(() => {
+      // Okay, now that everything is destroyed, lets build it up again
+    });
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.pokemon {
+  .electric {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .thunder {
+      width: 33%;
+      height: auto;
+      position: absolute;
+      top: 0;
+      z-index: -1;
+      &:first-child {
+        left: 0;
+      }
+      &:last-child {
+        right: 0;
+      }
+    }
+  }
+  img.pokemon-image {
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    transform: scale(0);
+    top: 150px;
+  }
+  @media (max-width: 550px) {
+    img.pokemon-image {
+      max-width: 300px;
+    }
+  }
+
+  .pokeball-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 40%;
+    width: 40%;
+    display: block;
+    max-width: 100%;
+    picture {
+      width: 25%;
+      height: auto;
+      position: relative;
+      img.pokeball {
+        width: 25%;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-45%);
+        height: 5px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 100%;
+      }
+    }
+  }
+  .flash-image {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 25%;
+    max-width: 100%;
+  }
+  .flash {
+    -webkit-animation: flash ease-out 1.2s forwards;
+    -moz-animation: flash ease-out 1.2s forwards;
+    animation: flash ease-out 1.2s forwards;
+  }
+
+  @-webkit-keyframes flash {
+    from {
+      opacity: 0;
+      transform: scale(0);
+    }
+    20% {
+      opacity: 0.2;
+    }
+    40% {
+      opacity: 0.6;
+    }
+    60% {
+      opacity: 0.8;
+    }
+    80% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: scale(1);
+      display: none;
+    }
+  }
+
+  @keyframes flash {
+    from {
+      opacity: 0;
+      transform: scale(0);
+    }
+    20% {
+      opacity: 0.2;
+    }
+    40% {
+      opacity: 0.6;
+    }
+    60% {
+      opacity: 0.6;
+    }
+    80% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: scale(1);
+      display: none;
+    }
+  }
+
+  .flashThunder {
+    -webkit-animation: flashThunder ease-out 7s infinite;
+    -moz-animation: flashThunder ease-out 7s infinite;
+    animation: flashThunder ease-out 7s infinite;
+    // animation-delay: 1s;
+  }
+
+  @-webkit-keyframes flashThunder {
+    from {
+      opacity: 1;
+    }
+    // 86% {
+    //   opacity: 1;
+    // }
+    // 88% {
+    //   opacity: 0.7;
+    // }
+    // 89% {
+    //   opacity: 0.4;
+    // }
+    92% {
+      opacity: 1;
+    }
+    93% {
+      opacity: 0.8;
+    }
+    94% {
+      opacity: 0.4;
+    }
+    96% {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes flashThunder {
+    from {
+      opacity: 1;
+    }
+    // 86% {
+    //   opacity: 1;
+    // }
+    // 88% {
+    //   opacity: 0.6;
+    // }
+    // 89% {
+    //   opacity: 0.2;
+    // }
+    92% {
+      opacity: 1;
+    }
+    93% {
+      opacity: 0.6;
+    }
+    94% {
+      opacity: 0.2;
+    }
+    96% {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+</style>

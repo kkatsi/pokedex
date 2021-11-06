@@ -116,6 +116,7 @@ export default {
   z-index: 9999999999;
   background-color: transparent;
   min-height: 100vh;
+  max-width: 100%;
   width: 100%;
   display: flex;
   justify-content: space-between;
