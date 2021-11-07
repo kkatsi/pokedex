@@ -26,8 +26,68 @@
         ></path>
       </svg>
     </div>
-    <div class="inner-section cont-lg" style="padding:0 .3rem">
-      <h2 class="title">Stats</h2>
+    <div class="inner-section cont-lg">
+      <h2 class="title">Base Stats</h2>
+      <div class="bars-container">
+        <div class="bar" :key="index" v-for="(stat, index) in pokemon.stats">
+          <span class="name col-sm-3 col-12">{{
+            stat.stat.name.replace("-", " ")
+          }}</span>
+          <span :class="{ value: true, 'col-12': true, 'col-sm-1': true }">{{
+            stat.base_stat
+          }}</span>
+          <div class="metric col-12 col-sm-8">
+            <div
+              class="percentage"
+              :style="{
+                width: calcPercentage(stat.base_stat) + '%',
+                boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
+              }"
+              v-if="index === 0"
+            ></div>
+            <div
+              class="percentage"
+              :style="{
+                width: calcPercentage(stat.base_stat) + '%',
+                boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
+              }"
+              v-else-if="index === 1"
+            ></div>
+            <div
+              class="percentage"
+              :style="{
+                width: calcPercentage(stat.base_stat) + '%',
+                boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
+              }"
+              v-else-if="index === 2"
+            ></div>
+            <div
+              class="percentage"
+              :style="{
+                width: calcPercentage(stat.base_stat) + '%',
+                boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
+              }"
+              v-else-if="index === 3"
+            ></div>
+            <div
+              class="percentage"
+              :style="{
+                width: calcPercentage(stat.base_stat) + '%',
+                boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
+              }"
+              v-else-if="index === 4"
+            ></div>
+            <div
+              class="percentage"
+              :style="{
+                width: calcPercentage(stat.base_stat) + '%',
+                boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
+              }"
+              v-else-if="index === 5"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -37,6 +97,32 @@ export default {
   props: {
     findColor: Function,
     pokemon: Object,
+  },
+  methods: {
+    findBoxColor(number) {
+      if (number < 60) return "red";
+      if (number < 100) return "orange";
+      if (number < 120) return "green";
+      if (number <= 255) return "cyan";
+    },
+    calcPercentage(number) {
+      return (number * 100) / 255;
+    },
+    // calcAttackPercentage(number) {
+    //   return (number * 100) / 190;
+    // },
+    // calcDefencePercentage(number) {
+    //   return (number * 100) / 230;
+    // },
+    // calcSpAttackPercentage(number) {
+    //   return (number * 100) / 194;
+    // },
+    // calcSpDefencePercentage(number) {
+    //   return (number * 100) / 230;
+    // },
+    // calcSpeedPercentage(number) {
+    //   return (number * 100) / 180;
+    // },
   },
 };
 </script>
@@ -59,11 +145,78 @@ export default {
   fill: #ffffff;
 }
 .stats {
+  --clr-neon: hsl(317 100% 54%);
+  --clr-bg: hsl(323 21% 16%);
+  color: white;
   //   background-color: rgb(248, 208, 48);
-  height: 500px;
+  .inner-section {
+    padding: 0 0.3rem;
+  }
   .title {
     font-size: 2rem;
     font-weight: 800;
+  }
+  .bars-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 700px;
+    text-align: center;
+    margin: auto;
+    width: 100%;
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      width: 100%;
+      .name {
+        text-transform: capitalize;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .value {
+        font-family: "Red Hat Mono", monospace !important;
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+      .metric {
+        height: 12px;
+        background-color: rgba(255, 255, 255, 0.452);
+        border-radius: 100000px;
+        position: relative;
+        .percentage {
+          content: "";
+          //   width: 40%;
+          height: 100%;
+          width: 0%;
+          position: absolute;
+          background-color: white;
+          //   box-shadow: 0 0 15px 2px cyan;
+          border-radius: 0.5rem;
+          left: 0;
+          top: 0;
+          transition: all 20s;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 575px) {
+  .bar {
+    margin-bottom: 1rem !important;
+    .name {
+      text-align: center !important;
+    }
+    .value {
+      margin-bottom: 0.5rem !important;
+    }
+  }
+  .inner-section {
+    padding: 0 1rem !important;
   }
 }
 </style>

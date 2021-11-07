@@ -96,7 +96,7 @@
           <span name="catch"
             >{{
               calcPercentageCatchRate(
-                pokemon.speciesDetails.capture_rate,
+                pokemon.speciesDetails?.capture_rate,
                 pokemon.stats.filter((stat) => stat.stat.name === "hp")[0]
                   .base_stat
               )
@@ -126,7 +126,7 @@
       <div class="col-6 level-rate">
         <label for="level">Levelling Rate</label>
         <span name="level" class="level">{{
-          pokemon.speciesDetails.growth_rate.name.replace("-", " ")
+          pokemon.speciesDetails?.growth_rate.name.replace("-", " ") || "??"
         }}</span>
       </div>
       <div class="col-12 types">
@@ -219,6 +219,7 @@ export default {
       return (number / 8) * 100;
     },
     calcPercentageCatchRate(number, baseHP) {
+      if (!number) return "??";
       return (
         ((1 + (baseHP * 3 - baseHP * 2) * number * 1 * 1) /
           (baseHP * 3) /
@@ -231,7 +232,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import url("https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@300;400;500;600;700&display=swap");
 .pokemon-basic-info {
   display: flex;
   margin: auto;
@@ -463,7 +463,7 @@ export default {
 }
 @media (max-width: 550px) {
   .pokemon-basic-info {
-    margin-top: 250px !important;
+    margin-top: 280px !important;
     width: auto;
     background-color: transparent;
     box-shadow: none;

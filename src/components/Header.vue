@@ -13,6 +13,7 @@
   src: url("../assets/Fonts/pokemon/@font-face/f4d1593471d222ddebd973210265762a.woff")
     format("woff");
 }
+
 .container {
   position: relative;
   width: 100%;
@@ -91,6 +92,14 @@
     animation: animatedLine 4s 0s infinite;
     animation-timing-function: cubic-bezier(0.4, 0.26, 0, 0.97);
     animation-fill-mode: forwards;
+  }
+}
+
+@media (max-width: 575px) {
+  .container {
+    h1 {
+      font-size: 4.5rem;
+    }
   }
 }
 
