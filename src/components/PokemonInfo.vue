@@ -14,12 +14,12 @@
       <div class="col-4 species">
         <label for="species">Species</label>
         <span name="species">{{
-          pokemon.speciesDetails.genera.filter(
+          pokemon.speciesDetails?.genera.filter(
             (gen) => gen.language.name === "en"
-          )[0].genus
+          )[0].genus || "-"
         }}</span>
       </div>
-      <div class="col-12 abilities">
+      <div class="col-6 abilities">
         <label for="abilities">Abilities</label>
         <div class="abilities-container">
           <div
@@ -28,43 +28,124 @@
             class="ability-container"
           >
             <span :class="{ hidden: ability.is_hidden, ability: true }">
+              {{ !ability.is_hidden ? index + 1 + ". " : "" }}
               {{ ability.ability.name.replace("-", " ") }}
             </span>
-            <eye-off-icon
-              v-if="ability.is_hidden"
-              style="margin-left:.5rem"
-            ></eye-off-icon>
-            <div class="icon-container">
-              <info-icon style="margin-left:.5rem" @click="openDetails">
-              </info-icon>
-              <div class="description-container" ref="desc">
+            <div class="eye-container">
+              <eye-off-icon
+                v-if="ability.is_hidden"
+                style="margin-left:.5rem"
+                @click="openDetails(`hidden`)"
+              ></eye-off-icon>
+              <div class="hidden-container" :ref="`hidden`">
                 <div class="text">
                   <button
                     class="close-button"
-                    @click="openDetails"
+                    @click="openDetails(`desc${index}`)"
                     aria-label="close-button"
                   >
                     <x-icon></x-icon>
                   </button>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
-                  culpa voluptatem itaque reprehenderit libero minima ab hic
-                  earum cum illum?
+                  Hidden Ability
+                </div>
+              </div>
+            </div>
+            <div class="info-container">
+              <info-icon
+                style="margin-left:.5rem"
+                @click="openDetails(`desc${index}`, ability.ability.name)"
+              >
+              </info-icon>
+              <div class="description-container" :ref="`desc${index}`">
+                <div class="text">
+                  <button
+                    class="close-button"
+                    @click="openDetails(`desc${index}`)"
+                    aria-label="close-button"
+                  >
+                    <x-icon></x-icon>
+                  </button>
+                  {{ abilityDescription?.short_effect }}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="types">
-      <span
-        :key="type.slot"
-        v-for="type in pokemon.types"
-        class="tag"
-        :style="{ background: findColor(type.type.name) }"
-      >
-        {{ type.type.name }}
-      </span>
+      <div class="col-6 gender">
+        <label for="gender">Gender</label>
+        <div name="gender-container">
+          <span v-if="pokemon.speciesDetails?.gender_rate === -1"
+            >Genderless</span
+          >
+          <div v-else class="gender-div">
+            {{
+              100 - calcPercentageGender(pokemon.speciesDetails?.gender_rate) ||
+                "??"
+            }}% <span class="male">♂</span>&nbsp;/
+            {{
+              calcPercentageGender(pokemon.speciesDetails?.gender_rate) || "??"
+            }}%
+            <span class="female">♀</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 catch-rate">
+        <label for="catch">Catch Rate</label>
+        <div class="catch-container">
+          <span name="catch"
+            >{{
+              calcPercentageCatchRate(
+                pokemon.speciesDetails.capture_rate,
+                pokemon.stats.filter((stat) => stat.stat.name === "hp")[0]
+                  .base_stat
+              )
+            }}%</span
+          >
+
+          <div class="info-container">
+            <info-icon
+              style="margin-left:.5rem"
+              @click="openDetails('hidden')"
+            ></info-icon>
+            <div class="hidden-container" :ref="`hidden`">
+              <div class="text">
+                <button
+                  class="close-button"
+                  @click="openDetails(`hidden`)"
+                  aria-label="close-button"
+                >
+                  <x-icon></x-icon>
+                </button>
+                Chance of capturing the pokemon with Poke Ball, full HP at the
+                1st try.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 level-rate">
+        <label for="level">Levelling Rate</label>
+        <span name="level" class="level">{{
+          pokemon.speciesDetails.growth_rate.name.replace("-", " ")
+        }}</span>
+      </div>
+      <div class="col-12 types">
+        <label for="tag">
+          Types
+        </label>
+        <div class="label-container">
+          <span
+            :key="type.slot"
+            v-for="type in pokemon.types"
+            name="tag"
+            class="tag"
+            :style="{ background: findColor(type.type.name) }"
+          >
+            {{ type.type.name }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -78,6 +159,12 @@ featCompt(InfoIcon);
 featCompt(XIcon);
 
 export default {
+  data() {
+    return {
+      abilityDescription: {},
+      prevRefName: String,
+    };
+  },
   components: {
     EyeOffIcon,
     InfoIcon,
@@ -88,16 +175,57 @@ export default {
     findColor: Function,
   },
   methods: {
-    openDetails() {
-      console.log("open");
-      const description_container = this.$refs.desc;
+    async openDetails(refName, ability) {
+      if (this.prevRefName === refName) {
+        const description_container = this.$refs[refName];
+        description_container.classList.remove("active");
+        this.prevRefName = "random";
+        return;
+      }
+      document
+        .querySelectorAll(".description-container, .hidden-container")
+        .forEach((el) => {
+          if (el.classList.contains("active")) el.classList.remove("active");
+        });
+
+      if (!ability) {
+        const description_container = this.$refs[refName];
+        description_container.classList.toggle("active");
+        this.prevRefName = refName;
+        return;
+      }
+      if (
+        Object.keys(this.abilityDescription).length === 0 ||
+        this.prevRefName !== refName
+      ) {
+        const res = await fetch(`https://pokeapi.co/api/v2/ability/${ability}`);
+        const json = await res.json();
+        const abilityDescription = json.effect_entries.filter(
+          (entry) => entry.language.name === "en"
+        )[0];
+        console.log(abilityDescription);
+        this.abilityDescription = abilityDescription;
+      }
+      const description_container = this.$refs[refName];
       description_container.classList.toggle("active");
+      this.prevRefName = refName;
     },
     toMeter(number) {
       return number / 10;
     },
     toKilos(number) {
       return number / 10;
+    },
+    calcPercentageGender(number) {
+      return (number / 8) * 100;
+    },
+    calcPercentageCatchRate(number, baseHP) {
+      return (
+        ((1 + (baseHP * 3 - baseHP * 2) * number * 1 * 1) /
+          (baseHP * 3) /
+          256) *
+        100
+      ).toFixed(1);
     },
   },
 };
@@ -134,7 +262,11 @@ export default {
     .height,
     .weight,
     .species,
-    .abilities {
+    .abilities,
+    .gender,
+    .types,
+    .catch-rate,
+    .level-rate {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -154,6 +286,9 @@ export default {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
+        &.level {
+          text-transform: capitalize;
+        }
       }
       .abilities-container {
         display: flex;
@@ -166,9 +301,11 @@ export default {
           .ability {
             text-transform: capitalize;
           }
-          .icon-container {
+          .info-container,
+          .eye-container {
             position: relative;
-            .description-container {
+            .description-container,
+            .hidden-container {
               background-color: white;
               position: absolute;
               width: 300px;
@@ -182,9 +319,10 @@ export default {
               transform: translateX(-50%);
               transition: all 0.5s ease;
               visibility: hidden;
+              z-index: -1;
               .text {
                 position: relative;
-                padding: 20px;
+                padding: 15px;
 
                 &:after {
                   content: "▼";
@@ -200,8 +338,8 @@ export default {
                   all: initial;
                   position: absolute;
                   color: grey;
-                  top: 5px;
-                  right: 5px;
+                  top: 0px;
+                  right: 0px;
                   padding: 5px;
                   cursor: pointer;
                 }
@@ -210,33 +348,116 @@ export default {
                 bottom: 150%;
                 opacity: 1;
                 visibility: initial;
+                z-index: 1;
               }
             }
           }
         }
       }
-    }
-    .abilities {
-      margin-top: 0.8rem;
-    }
-  }
 
-  .types {
-    display: flex;
-    flex-wrap: wrap;
-    padding-top: 1rem;
-    align-items: center;
-    justify-content: space-around;
-    margin-top: auto;
-    width: 100%;
-    .tag {
-      min-width: 45%;
-      color: whitesmoke;
-      font-size: 1rem;
-      font-weight: 900;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-      text-transform: capitalize;
+      .gender-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Red Hat Mono", monospace !important;
+        font-weight: 700;
+        color: rgb(145, 145, 145);
+        .male,
+        .female {
+          font-size: 1.5rem;
+          margin-left: 0.5rem;
+          font-weight: 900;
+        }
+        .male {
+          color: blue;
+        }
+        .female {
+          color: palevioletred;
+        }
+      }
+    }
+    .catch-rate {
+      .catch-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .info-container {
+          position: relative;
+          .hidden-container {
+            background-color: white;
+            position: absolute;
+            width: 300px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.19),
+              0 6px 3px rgba(0, 0, 0, 0.23);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            opacity: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.5s ease;
+            visibility: hidden;
+            z-index: -1;
+            .text {
+              position: relative;
+              padding: 15px;
+
+              &:after {
+                content: "▼";
+                width: 5px;
+                height: 5px;
+                position: absolute;
+                top: calc(100% - 5px);
+                left: 50%;
+                transform: translateX(-50%);
+                color: white;
+              }
+              .close-button {
+                all: initial;
+                position: absolute;
+                color: grey;
+                top: 0px;
+                right: 0px;
+                padding: 5px;
+                cursor: pointer;
+              }
+            }
+            &.active {
+              bottom: 150%;
+              opacity: 1;
+              visibility: initial;
+              z-index: 1;
+            }
+          }
+        }
+      }
+    }
+    .types {
+      .label-container {
+        display: flex;
+        flex-wrap: wrap;
+        padding-top: 1rem;
+        align-items: center;
+        justify-content: space-around;
+        margin-top: auto;
+        width: 100%;
+        .tag {
+          min-width: 45%;
+          color: whitesmoke;
+          font-size: 1rem;
+          font-weight: 900;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          text-transform: capitalize;
+        }
+      }
+    }
+    .abilities,
+    .gender,
+    .catch-rate,
+    .level-rate,
+    .types {
+      margin-top: 2rem;
     }
   }
 }

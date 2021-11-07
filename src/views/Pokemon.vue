@@ -88,7 +88,7 @@ export default {
           pokemon,
           {
             opacity: 1,
-            scale: 1,
+            scale: 0.9,
             duration: 1.2,
             ease: "Sine.easeInOut",
           },
@@ -191,21 +191,17 @@ export default {
       promises2.push(fetch(url2).then((res) => res.json()));
 
       Promise.all(promises1).then((results) => {
-        Promise.all(promises2).then((res) => {
-          // res.forEach((pok) => {
-          //   const english = pok.flavor_text_entries.find((lang) => {
-          //     return lang.language.name == "en";
-          //   });
-          //   // console.log(english);
-          //   const singleLang = english.flavor_text;
-          //   temp.push(singleLang);
-          // });
+        Promise.all(promises2)
+          .then((res) => {
+            results[0].speciesDetails = res[0];
+            console.log(results[0]);
 
-          results[0].speciesDetails = res[0];
-          console.log(results[0]);
-          this.pokemon = results[0];
-          // this.loading = false;
-        });
+            this.pokemon = results[0];
+          })
+          .catch((err) => {
+            this.pokemon = results[0];
+            console.log(err);
+          });
       });
     },
   },
