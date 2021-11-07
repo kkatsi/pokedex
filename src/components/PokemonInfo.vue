@@ -1,5 +1,5 @@
 <template>
-  <div class="pokemon-basic-info">
+  <section class="pokemon-basic-info">
     <span class="id">{{ pokemon.id }}</span>
     <h1 class="name">{{ pokemon.name }}</h1>
     <div class="row">
@@ -41,7 +41,7 @@
                 <div class="text">
                   <button
                     class="close-button"
-                    @click="openDetails(`desc${index}`)"
+                    @click="openDetails(`hidden`)"
                     aria-label="close-button"
                   >
                     <x-icon></x-icon>
@@ -106,19 +106,18 @@
           <div class="info-container">
             <info-icon
               style="margin-left:.5rem"
-              @click="openDetails('hidden')"
+              @click="openDetails('info')"
             ></info-icon>
-            <div class="hidden-container" :ref="`hidden`">
+            <div class="hidden-container" :ref="`info`">
               <div class="text">
                 <button
                   class="close-button"
-                  @click="openDetails(`hidden`)"
+                  @click="openDetails(`info`)"
                   aria-label="close-button"
                 >
                   <x-icon></x-icon>
                 </button>
-                Chance of capturing the pokemon with Poke Ball, full HP at the
-                1st try.
+                Chance of capturing the pokemon with Poke Ball, full HP.
               </div>
             </div>
           </div>
@@ -147,7 +146,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -239,13 +238,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 550px;
-  opacity: 0;
+  max-width: 700px;
+  opacity: 1;
   margin-top: 380px;
-  background-color: whitesmoke;
-  border-radius: 1rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  padding: 1rem 0;
+  margin-bottom: 3rem;
+  //   background-color: whitesmoke;
+  //   border-radius: 1rem;
+  //   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  //   padding: 1rem 0;
   .id {
     font-weight: 700;
     font-size: 1.2rem;
@@ -463,7 +463,7 @@ export default {
 }
 @media (max-width: 550px) {
   .pokemon-basic-info {
-    margin-top: 250px;
+    margin-top: 250px !important;
     width: auto;
     background-color: transparent;
     box-shadow: none;

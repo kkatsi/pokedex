@@ -1,27 +1,32 @@
 <template>
-  <div class="pokemon">
+  <div class="pokemon" style="overflowX:hidden">
     <div class="electric" v-show="showNow">
       <img src="../assets/Images/1.png" alt="" class="thunder" />
 
       <img src="../assets/Images/2.png" alt="" class="thunder" />
     </div>
+
     <img
       :src="pokemon.sprites.other['official-artwork'].front_default"
       :alt="pokemon.name"
       class="pokemon-image"
       v-if="pokemon"
     />
-    <transition name="fade">
+
+    <div v-if="pokemon" v-show="showNow">
       <PokemonInfo
-        :class="{ openDown: showNow }"
-        v-if="pokemon"
-        v-show="showNow"
         :pokemon="pokemon"
         :findColor="findColor"
+        class="cont-lg"
+        style="padding:0 .3rem"
       />
-    </transition>
+      <Stats :findColor="findColor" :pokemon="pokemon" />
+    </div>
 
-    <div class="pokemon-basic-info" v-if="pokemon" v-show="showNow"></div>
+    <button class="animation-skip" v-if="!showNow" @click="stopAnimation">
+      Skip Animations
+    </button>
+
     <div class="pokeball-container">
       <picture>
         <img
@@ -38,6 +43,9 @@
 <script>
 import gsap from "gsap";
 import PokemonInfo from "../components/PokemonInfo.vue";
+import Stats from "../components/Stats.vue";
+var tlBasicAnimation;
+var timeout;
 
 export default {
   data() {
@@ -48,6 +56,7 @@ export default {
   },
   components: {
     PokemonInfo,
+    Stats,
   },
   methods: {
     animateELements() {
@@ -62,15 +71,17 @@ export default {
     },
     pokeballAndPokemonAnimation() {
       if (!this.pokemon) return;
-      setTimeout(() => {
-        this.showNow = true;
-      }, 3900);
+      if (this.showNow) return;
+      // timeout = setTimeout(() => {
+      // }, 3900);
       const pokeball = document.querySelector(".pokeball-container img");
       const pokemon = document.querySelector(".pokemon-image");
       const info = document.querySelector(".pokemon-basic-info");
+      console.log(info);
 
-      var tlBasicAnimation = gsap.timeline();
+      tlBasicAnimation = gsap.timeline();
       tlBasicAnimation.delay(0.5);
+      tlBasicAnimation.endTime() === 1;
       tlBasicAnimation
         .to(pokeball, {
           y: "+=50",
@@ -80,8 +91,9 @@ export default {
         .to(document.querySelector("picture"), {
           duration: 0.5,
           opacity: 0,
-          onComplete: function() {
-            document.querySelector(".flash-image")?.classList.add("flash");
+          onComplete: () => {
+            if (!this.showNow)
+              document.querySelector(".flash-image")?.classList.add("flash");
           },
         })
         .to(
@@ -91,25 +103,33 @@ export default {
             scale: 0.9,
             duration: 1.2,
             ease: "Sine.easeInOut",
+            // onCompleteParams: [this.showNow],
+            onComplete: () => {
+              this.showNow = true;
+              document.querySelector(".flash-image").style.display = "none";
+              document
+                .querySelectorAll(".electric img")[0]
+                ?.classList.add("flashThunder");
+              setTimeout(() => {
+                document
+                  .querySelectorAll(".electric img")[1]
+                  ?.classList.add("flashThunder");
+              }, 500);
+            },
           },
           "<+=1.2"
         )
-        .to(info, {
+        .from(info, {
+          marginTop: 0,
           duration: 1,
-          // y: "+=380",
-          opacity: 1,
+          opacity: 0,
           ease: "Expo.easeOut",
-          onComplete: function() {
-            document
-              .querySelectorAll(".electric img")[0]
-              ?.classList.add("flashThunder");
-            setTimeout(() => {
-              document
-                .querySelectorAll(".electric img")[1]
-                ?.classList.add("flashThunder");
-            }, 500);
-          },
         });
+    },
+    stopAnimation() {
+      this.showNow = true;
+      tlBasicAnimation.progress(1).pause();
+      clearTimeout(timeout);
     },
 
     findColor(type) {
@@ -254,6 +274,13 @@ export default {
     img.pokemon-image {
       max-width: 300px;
     }
+  }
+
+  .animation-skip {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10%;
   }
 
   .pokeball-container {
