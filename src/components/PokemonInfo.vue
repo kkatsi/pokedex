@@ -246,6 +246,9 @@ export default {
   //   border-radius: 1rem;
   //   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   //   padding: 1rem 0;
+  svg {
+    cursor: pointer;
+  }
   .id {
     font-weight: 700;
     font-size: 1.2rem;

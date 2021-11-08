@@ -30,15 +30,18 @@
       <h2 class="title">Base Stats</h2>
       <div class="bars-container">
         <div class="bar" :key="index" v-for="(stat, index) in pokemon.stats">
-          <span class="name col-sm-3 col-12">{{
-            stat.stat.name.replace("-", " ")
-          }}</span>
+          <span class="name col-sm-3 col-12">
+            <span>{{ stat.stat.name.replace("-", " ") }}</span>
+            <span v-if="stat.effort !== 0" class="evs">{{
+              stat.effort !== 0 ? `${stat.effort} EV` : ""
+            }}</span>
+          </span>
           <span
             :ref="`val${index}`"
             :class="{ value: true, 'col-12': true, 'col-sm-1': true }"
             >{{ stat.base_stat }}</span
           >
-          <div class="metric col-12 col-sm-8">
+          <div class="metric col-12 col-sm-6">
             <div
               class="percentage"
               :ref="`perc${index}`"
@@ -94,16 +97,57 @@
               v-else-if="index === 5"
             ></div>
           </div>
+          <div class="min-max col-12 col-sm-2 min-max">
+            {{ calcMin(stat) }} {{ calcMax(stat) }}
+          </div>
+        </div>
+        <div class="extra">
+          <div class="col-6 col-sm-3 name">Total</div>
+          <div class="col-6 col-sm-1 value">
+            {{ calcTotal(pokemon.stats) }}
+          </div>
+          <div class="col-12 col-sm-6"></div>
+          <div class="col-12 col-sm-2 min-max-container">
+            <div class="column" style="margin-right:.7rem">
+              <span>Min</span>
+              <info-icon></info-icon>
+            </div>
+            <div class="column">
+              <span>Max</span>
+              <info-icon></info-icon>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="custom-shape-divider-bottom-1636414592">
+      <svg
+        data-name="Layer 1"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1200 120"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+          class="shape-fill"
+        ></path>
+      </svg>
     </div>
   </section>
 </template>
 
 <script>
+import { InfoIcon } from "vue-feather-icons";
+import featCompt from "../lib/feather";
+
+featCompt(InfoIcon);
+
 let flag;
 
 export default {
+  components: {
+    InfoIcon,
+  },
   props: {
     findColor: Function,
     pokemon: Object,
@@ -139,20 +183,25 @@ export default {
       });
     });
   },
-  //   beforeDestroy() {
-  //     window.removeEventListener("scroll", () => {
-  //       if (window.scrollY >= 425 && flag) {
-  //         document
-  //           .querySelectorAll(".metric .percentage")
-  //           .forEach((el, index) => {
-  //             el.style.width = widths[index];
-  //             this.animateValue(index, 0, values[index], 1500);
-  //           });
-  //         flag = false;
-  //       }
-  //     });
-  //   },
   methods: {
+    calcTotal(stats) {
+      const temp = stats.map((stat) => {
+        return Number(stat.base_stat);
+      });
+      console.log(temp);
+      return temp.reduce((a, b) => a + b, 0);
+    },
+    calcMax(stat) {
+      if (stat.stat.name === "hp") return Math.floor(stat.base_stat * 2 + 204);
+      return Math.floor((stat.base_stat * 2 + 99) * 1.1);
+    },
+    calcMin(stat) {
+      if (stat.stat.name === "hp")
+        return Math.floor(stat.base_stat * 2 + 10 + 100);
+      return Math.floor(
+        stat.base_stat * 2 + 5 - ((stat.base_stat * 2 + 5) * 10) / 100
+      );
+    },
     findBoxColor(number) {
       if (number < 60) return "red";
       if (number < 90) return "orange";
@@ -214,10 +263,26 @@ export default {
 .custom-shape-divider-top-1636288897 .shape-fill {
   fill: #ffffff;
 }
+
+.custom-shape-divider-bottom-1636414592 {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1636414592 svg {
+  position: relative;
+  display: block;
+  width: calc(280% + 1.3px);
+  height: 130px;
+}
+
+.custom-shape-divider-bottom-1636414592 .shape-fill {
+  fill: #ffffff;
+}
 .stats {
-  padding-bottom: 3rem;
   color: white;
-  //   background-color: rgb(248, 208, 48);
   .inner-section {
     padding: 0 0.3rem;
   }
@@ -234,7 +299,8 @@ export default {
     text-align: center;
     margin: auto;
     width: 100%;
-    .bar {
+    .bar,
+    .extra {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -245,6 +311,14 @@ export default {
         text-transform: capitalize;
         font-weight: 500;
         text-align: left;
+        display: flex;
+        align-items: center;
+        .evs {
+          font-weight: 900;
+          text-shadow: 0 0 0.8em cyan;
+          font-family: "Red Hat Mono", monospace !important;
+          margin-left: auto;
+        }
       }
 
       .value {
@@ -271,6 +345,25 @@ export default {
           transition: all 1.5s;
         }
       }
+      .min-max {
+        font-family: "Red Hat Mono", monospace !important;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+      .min-max-container {
+        display: flex;
+        justify-content: center;
+        .column {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          font-size: 1.1rem;
+          svg {
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 }
@@ -278,10 +371,27 @@ export default {
   .bar {
     margin-bottom: 1rem !important;
     .name {
-      text-align: center !important;
+      justify-content: center !important;
+      .evs {
+        margin-left: 0.5rem !important;
+      }
     }
     .value {
       margin-bottom: 0.5rem !important;
+    }
+  }
+
+  .extra {
+    .name {
+      order: 3;
+    }
+    .value {
+      order: 3;
+      text-align: right !important;
+    }
+
+    .min-max-container {
+      order: 1;
     }
   }
   .inner-section {
