@@ -279,10 +279,21 @@ export default {
   }
 
   .animation-skip {
+    --clr-neon: hsl(317 100% 54%);
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     bottom: 10%;
+    background-color: transparent;
+    color: var(--clr-neon);
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: 4px solid var(--clr-neon);
+    border-radius: 99999px;
+    padding: 0.5rem 2rem;
+    text-shadow: 0 0 0.5em var(--clr-neon);
+    box-shadow: 0 0 1em var(--clr-neon);
+    cursor: pointer;
   }
 
   .pokeball-container {

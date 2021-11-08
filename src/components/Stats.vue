@@ -33,12 +33,15 @@
           <span class="name col-sm-3 col-12">{{
             stat.stat.name.replace("-", " ")
           }}</span>
-          <span :class="{ value: true, 'col-12': true, 'col-sm-1': true }">{{
-            stat.base_stat
-          }}</span>
+          <span
+            :ref="`val${index}`"
+            :class="{ value: true, 'col-12': true, 'col-sm-1': true }"
+            >{{ stat.base_stat }}</span
+          >
           <div class="metric col-12 col-sm-8">
             <div
               class="percentage"
+              :ref="`perc${index}`"
               :style="{
                 width: calcPercentage(stat.base_stat) + '%',
                 boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
@@ -47,6 +50,7 @@
             ></div>
             <div
               class="percentage"
+              :ref="`perc${index}`"
               :style="{
                 width: calcPercentage(stat.base_stat) + '%',
                 boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
@@ -55,6 +59,7 @@
             ></div>
             <div
               class="percentage"
+              :ref="`perc${index}`"
               :style="{
                 width: calcPercentage(stat.base_stat) + '%',
                 boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
@@ -63,6 +68,7 @@
             ></div>
             <div
               class="percentage"
+              :ref="`perc${index}`"
               :style="{
                 width: calcPercentage(stat.base_stat) + '%',
                 boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
@@ -71,6 +77,7 @@
             ></div>
             <div
               class="percentage"
+              :ref="`perc${index}`"
               :style="{
                 width: calcPercentage(stat.base_stat) + '%',
                 boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
@@ -79,6 +86,7 @@
             ></div>
             <div
               class="percentage"
+              :ref="`perc${index}`"
               :style="{
                 width: calcPercentage(stat.base_stat) + '%',
                 boxShadow: `0 0 15px 2px ${findBoxColor(stat.base_stat)}`,
@@ -93,20 +101,82 @@
 </template>
 
 <script>
+let flag;
+
 export default {
   props: {
     findColor: Function,
     pokemon: Object,
   },
+  mounted() {
+    this.$nextTick(() => {
+      const widths = [];
+      const values = [];
+      flag = true;
+      //trying to animated stat widths of bars;
+      //getting all width values and reseting them to 0;
+      //getting all number values;
+      for (let i = 0; i < 6; i++) {
+        widths.push(this.$refs[`perc${i}`].style.getPropertyValue("width"));
+        this.$refs[`perc${i}`].style.setProperty("width", "0%");
+        values.push(Number(this.$refs[`val${i}`].innerText));
+      }
+      //on specific scroll position give them the proper widths again
+      //and animating number values from 0 to the stat value
+      window.addEventListener("scroll", () => {
+        if (window.scrollY >= 425 && flag) {
+          for (let i = 0; i < 6; i++) {
+            //return if null
+            if (!this.$refs[`perc${i}`]) {
+              return;
+            }
+            this.$refs[`perc${i}`].style.width = widths[i];
+            this.animateValue(i, 0, values[i], 1500);
+            //change flag to execute only once
+            if (flag) flag = false;
+          }
+        }
+      });
+    });
+  },
+  //   beforeDestroy() {
+  //     window.removeEventListener("scroll", () => {
+  //       if (window.scrollY >= 425 && flag) {
+  //         document
+  //           .querySelectorAll(".metric .percentage")
+  //           .forEach((el, index) => {
+  //             el.style.width = widths[index];
+  //             this.animateValue(index, 0, values[index], 1500);
+  //           });
+  //         flag = false;
+  //       }
+  //     });
+  //   },
   methods: {
     findBoxColor(number) {
       if (number < 60) return "red";
-      if (number < 100) return "orange";
+      if (number < 90) return "orange";
       if (number < 120) return "green";
       if (number <= 255) return "cyan";
     },
     calcPercentage(number) {
       return (number * 100) / 255;
+    },
+    animateValue(id, start, end, duration) {
+      if (start === end) return;
+      var range = end - start;
+      var current = start;
+      var increment = end > start ? 1 : -1;
+      var stepTime = Math.abs(Math.floor(duration / range));
+      //   var obj = document.querySelectorAll(".bar .value")[id];
+      var obj = this.$refs[`val${id}`];
+      var timer = setInterval(function() {
+        current += increment;
+        obj.innerHTML = current;
+        if (current == end) {
+          clearInterval(timer);
+        }
+      }, stepTime);
     },
     // calcAttackPercentage(number) {
     //   return (number * 100) / 190;
@@ -145,8 +215,7 @@ export default {
   fill: #ffffff;
 }
 .stats {
-  --clr-neon: hsl(317 100% 54%);
-  --clr-bg: hsl(323 21% 16%);
+  padding-bottom: 3rem;
   color: white;
   //   background-color: rgb(248, 208, 48);
   .inner-section {
@@ -199,7 +268,7 @@ export default {
           border-radius: 0.5rem;
           left: 0;
           top: 0;
-          transition: all 20s;
+          transition: all 1.5s;
         }
       }
     }
