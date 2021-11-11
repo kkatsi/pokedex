@@ -556,4 +556,9 @@ export default {
     }
   }
 }
+@media (max-width: 550px) {
+  .home {
+    padding-top: 1.5rem;
+  }
+}
 </style>

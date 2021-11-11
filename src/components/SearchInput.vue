@@ -7,7 +7,9 @@
         type="text"
         ref="searchText"
         @keyup="handleChange"
-        placeholder="Search for pokemon name or code..."
+        :placeholder="
+          windowWidth > 550 ? 'Search for pokemon name or code...' : 'Search...'
+        "
       />
       <button @click="search" class="icon">
         <search-icon></search-icon>
@@ -29,6 +31,7 @@ export default {
   data() {
     return {
       value: "",
+      windowWidth: window.innerWidth,
     };
   },
   methods: {
@@ -106,6 +109,11 @@ export default {
         outline: 0;
       }
     }
+  }
+}
+@media (max-width: 550px) {
+  .input-container {
+    width: 90% !important;
   }
 }
 </style>

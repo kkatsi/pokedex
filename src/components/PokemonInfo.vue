@@ -31,44 +31,20 @@
               {{ !ability.is_hidden ? index + 1 + ". " : "" }}
               {{ ability.ability.name.replace("-", " ") }}
             </span>
-            <div class="eye-container">
-              <eye-off-icon
-                v-if="ability.is_hidden"
-                style="margin-left:.5rem"
-                @click="openDetails(`hidden`)"
-              ></eye-off-icon>
-              <div class="hidden-container" :ref="`hidden`">
-                <div class="text">
-                  <button
-                    class="close-button"
-                    @click="openDetails(`hidden`)"
-                    aria-label="close-button"
-                  >
-                    <x-icon></x-icon>
-                  </button>
-                  Hidden Ability
-                </div>
-              </div>
-            </div>
-            <div class="info-container">
-              <info-icon
-                style="margin-left:.5rem"
-                @click="openDetails(`desc${index}`, ability.ability.name)"
-              >
-              </info-icon>
-              <div class="description-container" :ref="`desc${index}`">
-                <div class="text">
-                  <button
-                    class="close-button"
-                    @click="openDetails(`desc${index}`)"
-                    aria-label="close-button"
-                  >
-                    <x-icon></x-icon>
-                  </button>
-                  {{ abilityDescription?.short_effect }}
-                </div>
-              </div>
-            </div>
+            <info-toast
+              :ability="ability"
+              icon="eye"
+              refValue="hidden"
+              text="Hidden Ability"
+            >
+            </info-toast>
+            <info-toast
+              :ability="ability"
+              icon="info"
+              :refValue="`desc${index}`"
+              text=""
+            >
+            </info-toast>
           </div>
         </div>
       </div>
@@ -79,14 +55,20 @@
             >Genderless</span
           >
           <div v-else class="gender-div">
-            {{
-              100 - calcPercentageGender(pokemon.speciesDetails?.gender_rate) ||
-                "??"
-            }}% <span class="male">♂</span>&nbsp;/
-            {{
-              calcPercentageGender(pokemon.speciesDetails?.gender_rate) || "??"
-            }}%
-            <span class="female">♀</span>
+            <div class="male-container">
+              {{
+                100 -
+                  calcPercentageGender(pokemon.speciesDetails?.gender_rate) ||
+                  "??"
+              }}%<span class="male">♂</span>
+            </div>
+            <span v-show="windowWidth > 550">&nbsp;/&nbsp;</span>
+            <div class="female-container">
+              {{
+                calcPercentageGender(pokemon.speciesDetails?.gender_rate) ||
+                  "??"
+              }}%<span class="female">♀</span>
+            </div>
           </div>
         </div>
       </div>
@@ -102,25 +84,12 @@
               )
             }}%</span
           >
-
-          <div class="info-container">
-            <info-icon
-              style="margin-left:.5rem"
-              @click="openDetails('info')"
-            ></info-icon>
-            <div class="hidden-container" :ref="`info`">
-              <div class="text">
-                <button
-                  class="close-button"
-                  @click="openDetails(`info`)"
-                  aria-label="close-button"
-                >
-                  <x-icon></x-icon>
-                </button>
-                Chance of capturing the pokemon with Poke Ball, full HP.
-              </div>
-            </div>
-          </div>
+          <info-toast
+            :refValue="`info`"
+            :ability="{}"
+            icon="info"
+            text="Chance of capturing the pokemon with Poke Ball, full HP."
+          ></info-toast>
         </div>
       </div>
       <div class="col-6 level-rate">
@@ -150,65 +119,25 @@
 </template>
 
 <script>
-import { EyeOffIcon, InfoIcon, XIcon } from "vue-feather-icons";
-import featCompt from "../lib/feather";
-
-featCompt(EyeOffIcon);
-featCompt(InfoIcon);
-featCompt(XIcon);
+import InfoToast from "./InfoToast.vue";
 
 export default {
   data() {
     return {
-      abilityDescription: {},
-      prevRefName: String,
+      windowWidth: window.innerWidth,
     };
   },
   components: {
-    EyeOffIcon,
-    InfoIcon,
-    XIcon,
+    // EyeOffIcon,
+    // InfoIcon,
+    // XIcon,
+    InfoToast,
   },
   props: {
     pokemon: Object,
     findColor: Function,
   },
   methods: {
-    async openDetails(refName, ability) {
-      if (this.prevRefName === refName) {
-        const description_container = this.$refs[refName];
-        description_container.classList.remove("active");
-        this.prevRefName = "random";
-        return;
-      }
-      document
-        .querySelectorAll(".description-container, .hidden-container")
-        .forEach((el) => {
-          if (el.classList.contains("active")) el.classList.remove("active");
-        });
-
-      if (!ability) {
-        const description_container = this.$refs[refName];
-        description_container.classList.toggle("active");
-        this.prevRefName = refName;
-        return;
-      }
-      if (
-        Object.keys(this.abilityDescription).length === 0 ||
-        this.prevRefName !== refName
-      ) {
-        const res = await fetch(`https://pokeapi.co/api/v2/ability/${ability}`);
-        const json = await res.json();
-        const abilityDescription = json.effect_entries.filter(
-          (entry) => entry.language.name === "en"
-        )[0];
-        console.log(abilityDescription);
-        this.abilityDescription = abilityDescription;
-      }
-      const description_container = this.$refs[refName];
-      description_container.classList.toggle("active");
-      this.prevRefName = refName;
-    },
     toMeter(number) {
       return number / 10;
     },
@@ -304,57 +233,6 @@ export default {
           .ability {
             text-transform: capitalize;
           }
-          .info-container,
-          .eye-container {
-            position: relative;
-            .description-container,
-            .hidden-container {
-              background-color: white;
-              position: absolute;
-              width: 300px;
-              box-shadow: 0 10px 10px rgba(0, 0, 0, 0.19),
-                0 6px 3px rgba(0, 0, 0, 0.23);
-              border-radius: 5px;
-              font-size: 0.9rem;
-              opacity: 0;
-              bottom: 0;
-              left: 50%;
-              transform: translateX(-50%);
-              transition: all 0.5s ease;
-              visibility: hidden;
-              z-index: -1;
-              .text {
-                position: relative;
-                padding: 15px;
-
-                &:after {
-                  content: "▼";
-                  width: 5px;
-                  height: 5px;
-                  position: absolute;
-                  top: calc(100% - 5px);
-                  left: 50%;
-                  transform: translateX(-50%);
-                  color: white;
-                }
-                .close-button {
-                  all: initial;
-                  position: absolute;
-                  color: grey;
-                  top: 0px;
-                  right: 0px;
-                  padding: 5px;
-                  cursor: pointer;
-                }
-              }
-              &.active {
-                bottom: 150%;
-                opacity: 1;
-                visibility: initial;
-                z-index: 1;
-              }
-            }
-          }
         }
       }
 
@@ -365,17 +243,21 @@ export default {
         font-family: "Red Hat Mono", monospace !important;
         font-weight: 700;
         color: rgb(145, 145, 145);
-        .male,
-        .female {
-          font-size: 1.5rem;
-          margin-left: 0.5rem;
-          font-weight: 900;
-        }
-        .male {
-          color: blue;
-        }
-        .female {
-          color: palevioletred;
+        .male-container,
+        .female-container {
+          font-family: "Red Hat Mono", monospace !important;
+          .male,
+          .female {
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+            font-weight: 900;
+          }
+          .male {
+            color: blue;
+          }
+          .female {
+            color: palevioletred;
+          }
         }
       }
     }
@@ -384,55 +266,56 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        .info-container {
-          position: relative;
-          .hidden-container {
-            background-color: white;
-            position: absolute;
-            width: 300px;
-            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.19),
-              0 6px 3px rgba(0, 0, 0, 0.23);
-            border-radius: 5px;
-            font-size: 0.9rem;
-            opacity: 0;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: all 0.5s ease;
-            visibility: hidden;
-            z-index: -1;
-            .text {
-              position: relative;
-              padding: 15px;
+        // .info-container {
+        //   position: relative;
+        //   .description-container,
+        //   .hidden-container {
+        //     background-color: white;
+        //     position: absolute;
+        //     width: 200px;
+        //     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.19),
+        //       0 6px 3px rgba(0, 0, 0, 0.23);
+        //     border-radius: 5px;
+        //     font-size: 0.9rem;
+        //     opacity: 0;
+        //     bottom: 0;
+        //     left: 50%;
+        //     transform: translateX(-50%);
+        //     transition: all 0.5s ease;
+        //     visibility: hidden;
+        //     z-index: -1;
+        //     .text {
+        //       position: relative;
+        //       padding: 15px;
 
-              &:after {
-                content: "▼";
-                width: 5px;
-                height: 5px;
-                position: absolute;
-                top: calc(100% - 5px);
-                left: 50%;
-                transform: translateX(-50%);
-                color: white;
-              }
-              .close-button {
-                all: initial;
-                position: absolute;
-                color: grey;
-                top: 0px;
-                right: 0px;
-                padding: 5px;
-                cursor: pointer;
-              }
-            }
-            &.active {
-              bottom: 150%;
-              opacity: 1;
-              visibility: initial;
-              z-index: 1;
-            }
-          }
-        }
+        //       &:after {
+        //         content: "▼";
+        //         width: 5px;
+        //         height: 5px;
+        //         position: absolute;
+        //         top: calc(100% - 5px);
+        //         left: 50%;
+        //         transform: translateX(-50%);
+        //         color: white;
+        //       }
+        //       .close-button {
+        //         all: initial;
+        //         position: absolute;
+        //         color: grey;
+        //         top: 0px;
+        //         right: 0px;
+        //         padding: 5px;
+        //         cursor: pointer;
+        //       }
+        //     }
+        //     &.active {
+        //       bottom: 150%;
+        //       opacity: 1;
+        //       visibility: initial;
+        //       z-index: 1;
+        //     }
+        //   }
+        // }
       }
     }
     .types {
@@ -466,10 +349,13 @@ export default {
 }
 @media (max-width: 550px) {
   .pokemon-basic-info {
-    margin-top: 280px !important;
+    margin-top: 350px !important;
     width: auto;
     background-color: transparent;
     box-shadow: none;
+  }
+  .gender-div {
+    flex-direction: column;
   }
 }
 </style>

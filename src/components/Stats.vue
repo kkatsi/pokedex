@@ -103,18 +103,30 @@
         </div>
         <div class="extra">
           <div class="col-6 col-sm-3 name">Total</div>
-          <div class="col-6 col-sm-1 value">
+          <div class="col-6 col-sm-1 value" ref="total">
             {{ calcTotal(pokemon.stats) }}
           </div>
           <div class="col-12 col-sm-6"></div>
           <div class="col-12 col-sm-2 min-max-container">
             <div class="column" style="margin-right:.7rem">
               <span>Min</span>
-              <info-icon></info-icon>
+              <info-toast
+                :ability="{}"
+                icon="info"
+                refValue="min"
+                text="Minimum stats for each ability. This value is for 100 level pokemon with hindering nature, 0 EVs, 0 IVs."
+              >
+              </info-toast>
             </div>
             <div class="column">
               <span>Max</span>
-              <info-icon></info-icon>
+              <info-toast
+                :ability="{}"
+                icon="info"
+                refValue="max"
+                text="Maximum stats for each ability. This value is for 100 level pokemon with beneficial nature, 252 EVs, 31 IVs."
+              >
+              </info-toast>
             </div>
           </div>
         </div>
@@ -139,6 +151,7 @@
 <script>
 import { InfoIcon } from "vue-feather-icons";
 import featCompt from "../lib/feather";
+import InfoToast from "./InfoToast.vue";
 
 featCompt(InfoIcon);
 
@@ -147,6 +160,7 @@ let flag;
 export default {
   components: {
     InfoIcon,
+    InfoToast,
   },
   props: {
     findColor: Function,
@@ -165,6 +179,8 @@ export default {
         this.$refs[`perc${i}`].style.setProperty("width", "0%");
         values.push(Number(this.$refs[`val${i}`].innerText));
       }
+      //push total value into other values
+      values.push(this.$refs.total.innerText);
       //on specific scroll position give them the proper widths again
       //and animating number values from 0 to the stat value
       window.addEventListener("scroll", () => {
@@ -179,6 +195,8 @@ export default {
             //change flag to execute only once
             if (flag) flag = false;
           }
+          //animate total too at the end
+          this.animateValue("total", 0, values[values.length - 1], 1500);
         }
       });
     });
@@ -218,7 +236,7 @@ export default {
       var increment = end > start ? 1 : -1;
       var stepTime = Math.abs(Math.floor(duration / range));
       //   var obj = document.querySelectorAll(".bar .value")[id];
-      var obj = this.$refs[`val${id}`];
+      var obj = this.$refs[`val${id}`] || this.$refs[id];
       var timer = setInterval(function() {
         current += increment;
         obj.innerHTML = current;
@@ -276,6 +294,7 @@ export default {
   display: block;
   width: calc(280% + 1.3px);
   height: 130px;
+  margin-bottom: 2px;
 }
 
 .custom-shape-divider-bottom-1636414592 .shape-fill {
