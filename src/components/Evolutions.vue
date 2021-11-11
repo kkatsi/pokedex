@@ -91,8 +91,6 @@ export default {
     );
 
     this.pokemonEvolutions = pokemonEvolutions;
-
-    // console.log(pokemonEvolutions);
   },
 };
 </script>
