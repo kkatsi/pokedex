@@ -298,7 +298,7 @@ export default {
 }
 
 .custom-shape-divider-bottom-1636414592 .shape-fill {
-  fill: #ffffff;
+  fill: whitesmoke;
 }
 .stats {
   color: white;

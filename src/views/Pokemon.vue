@@ -21,7 +21,8 @@
         style="padding:0 .3rem"
       />
       <Stats :findColor="findColor" :pokemon="pokemon" />
-      <Effectiveness />
+      <Effectiveness :pokemon="pokemon" :findColor="findColor" />
+      <Evolutions :pokemon="pokemon" />
     </div>
 
     <button class="animation-skip" v-if="!showNow" @click="stopAnimation">
@@ -46,6 +47,7 @@ import gsap from "gsap";
 import PokemonInfo from "../components/PokemonInfo.vue";
 import Stats from "../components/Stats.vue";
 import Effectiveness from "../components/Effectiveness.vue";
+import Evolutions from "../components/Evolutions.vue";
 var tlBasicAnimation;
 var timeout;
 
@@ -60,6 +62,7 @@ export default {
     PokemonInfo,
     Stats,
     Effectiveness,
+    Evolutions,
   },
   methods: {
     animateELements() {
@@ -401,15 +404,6 @@ export default {
     from {
       opacity: 1;
     }
-    // 86% {
-    //   opacity: 1;
-    // }
-    // 88% {
-    //   opacity: 0.7;
-    // }
-    // 89% {
-    //   opacity: 0.4;
-    // }
     92% {
       opacity: 1;
     }
@@ -431,15 +425,6 @@ export default {
     from {
       opacity: 1;
     }
-    // 86% {
-    //   opacity: 1;
-    // }
-    // 88% {
-    //   opacity: 0.6;
-    // }
-    // 89% {
-    //   opacity: 0.2;
-    // }
     92% {
       opacity: 1;
     }
