@@ -14,7 +14,7 @@
     </p>
     <div class="row">
       <div
-        class="super-effective col-12 col-sm-6"
+        class="super-effective col-12 col-sm-6 col-md-4 col-xl-3"
         v-show="types.fourx?.length > 0 || false"
       >
         <h4 class="title">
@@ -37,7 +37,7 @@
         </span>
       </div>
       <div
-        class="super-effective col-12 col-sm-6"
+        class="super-effective col-12 col-sm-6 col-md-4 col-xl-3"
         v-show="types.twox?.length > 0 || false"
       >
         <h4 class="title">
@@ -59,7 +59,7 @@
         </span>
       </div>
       <div
-        class="not-effective col-12 col-sm-6"
+        class="not-effective col-12 col-sm-6 col-md-4 col-xl-3"
         v-show="types.halfx?.length > 0 || false"
       >
         <h4 class="title">
@@ -81,7 +81,7 @@
         </span>
       </div>
       <div
-        class="not-effective col-12 col-sm-6"
+        class="not-effective col-12 col-sm-6 col-md-4 col-xl-3"
         v-show="types.quarterx?.length > 0 || false"
       >
         <h4 class="title">
@@ -103,7 +103,7 @@
         </span>
       </div>
       <div
-        class="zero col-12 col-sm-6"
+        class="zero col-12 col-sm-6 col-md-4 col-xl-3"
         v-show="types.zerox?.length > 0 || false"
       >
         <h4 class="title">
@@ -246,7 +246,7 @@ export default {
   }
   .row {
     justify-content: center;
-    max-width: 700px;
+    // max-width: 700px;
     margin: auto;
     .col-12 {
       margin-bottom: 2rem;

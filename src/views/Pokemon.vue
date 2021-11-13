@@ -22,7 +22,7 @@
       />
       <Stats :findColor="findColor" :pokemon="pokemon" />
       <Effectiveness :pokemon="pokemon" :findColor="findColor" />
-      <Evolutions :pokemon="pokemon" />
+      <Evolutions :pokemon="pokemon" :findColor="findColor" />
     </div>
 
     <button class="animation-skip" v-if="!showNow" @click="stopAnimation">
