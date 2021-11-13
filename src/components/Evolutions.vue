@@ -13,14 +13,192 @@
           :key="index"
         >
           <div class="arrow-container" v-show="i !== 0 && windowWidth > 750">
-            <div class="level-evolving">
-              <span class="evolves_at">Evolves at level</span>
-              <span class="evolution-level">{{
-                evolutionChain[i][index].min_level
+            <div
+              class="options level-evolving"
+              v-if="
+                evolutionChain[i][index].min_level ||
+                  evolutionChain[i][index].trigger_name === 'shed'
+              "
+            >
+              <span class="text">Evolves at level</span>
+              <span class="value">{{
+                evolutionChain[i][index].min_level || 20
+              }}</span>
+            </div>
+            <div
+              class="options gender-evolving"
+              v-if="evolutionChain[i][index].gender"
+            >
+              <span class="text">Must be</span>
+              <span class="value">
+                <span
+                  v-if="evolutionChain[i][index].gender === 1"
+                  class="female"
+                  >♀</span
+                >
+                <span v-if="evolutionChain[i][index].gender === 2" class="male"
+                  >♂</span
+                >
+              </span>
+            </div>
+            <div
+              class="options affection"
+              v-if="evolutionChain[i][index].min_affection"
+            >
+              <span class="text">Affection must be at least level</span>
+              <span class="value">{{
+                evolutionChain[i][index].min_affection
               }}</span>
             </div>
 
+            <div
+              class="options "
+              v-if="evolutionChain[i][index].trigger_name === 'trade'"
+            >
+              <span class="text">Trade</span>
+              <span class="value"></span>
+            </div>
             <img src="../assets/Images/right-arrow.png" alt="" />
+
+            <div
+              class="options held-item-evolving"
+              v-if="evolutionChain[i][index].held_item"
+            >
+              <span class="text">Must hold</span>
+              <span class="value">{{
+                evolutionChain[i][index].held_item.name.replaceAll("-", " ")
+              }}</span>
+            </div>
+            <div class="options item" v-if="evolutionChain[i][index].item">
+              <span class="text">Use</span>
+              <span class="value">{{
+                evolutionChain[i][index].item.name.replaceAll("-", " ")
+              }}</span>
+            </div>
+            <div
+              class="options known-move"
+              v-if="evolutionChain[i][index].known_move"
+            >
+              <span class="text">Must know</span>
+              <span class="value">{{
+                evolutionChain[i][index].known_move.name.replaceAll("-", " ")
+              }}</span>
+            </div>
+            <div
+              class="options known-move-type"
+              v-if="evolutionChain[i][index].known_move_type"
+            >
+              <span class="text">Must knows a move of type</span>
+              <span class="value">{{
+                evolutionChain[i][index].known_move_type.name.replaceAll(
+                  "-",
+                  " "
+                )
+              }}</span>
+            </div>
+            <div
+              class="options location"
+              v-if="evolutionChain[i][index].location"
+            >
+              <span class="text">at</span>
+              <span class="value">{{
+                evolutionChain[i][index].location.name.replaceAll("-", " ")
+              }}</span>
+            </div>
+            <div
+              class="options beauty"
+              v-if="evolutionChain[i][index].min_beauty"
+            >
+              <span class="text">Beauty must be at least</span>
+              <span class="value">{{
+                evolutionChain[i][index].min_beauty
+              }}</span>
+            </div>
+            <div
+              class="options happiness"
+              v-if="evolutionChain[i][index].min_happiness"
+            >
+              <span class="text">Happiness must be at least</span>
+              <span class="value">{{
+                evolutionChain[i][index].min_happiness
+              }}</span>
+            </div>
+            <div
+              class="options overworld_rain"
+              v-if="evolutionChain[i][index].needs_overworld_rain"
+            >
+              <span class="text">During rain</span>
+              <span class="value"></span>
+            </div>
+            <div
+              class="options party_species"
+              v-if="evolutionChain[i][index].party_species"
+            >
+              <span class="text">Player's party must have a</span>
+              <span class="value">{{
+                evolutionChain[i][index].party_species.name
+              }}</span>
+            </div>
+            <div
+              class="options party_type"
+              v-if="evolutionChain[i][index].party_type"
+            >
+              <span class="text"
+                >Player's party must have a pokemon of type</span
+              >
+              <span class="value">{{
+                evolutionChain[i][index].party_type.name
+              }}</span>
+            </div>
+            <div
+              class="options stats"
+              v-if="
+                evolutionChain[i][index].relative_physical_stats ||
+                  evolutionChain[i][index].relative_physical_stats === 0
+              "
+            >
+              <span class="text">
+                <span
+                  v-if="evolutionChain[i][index].relative_physical_stats === 1"
+                  >IF Attack > Defence</span
+                >
+                <span
+                  v-else-if="
+                    evolutionChain[i][index].relative_physical_stats === -1
+                  "
+                  >IF Attack &#60; Defence</span
+                >
+                <span v-else>IF Attack = Defence</span>
+              </span>
+              <span class="value"></span>
+            </div>
+            <div
+              class="options day-time"
+              v-if="evolutionChain[i][index].time_of_day"
+            >
+              <span class="text">During</span>
+              <span class="value">{{
+                evolutionChain[i][index].time_of_day
+              }}</span>
+            </div>
+            <div
+              class="options trade-species"
+              v-if="evolutionChain[i][index].trade_species"
+            >
+              <span class="text">Trading with</span>
+              <span class="value">{{
+                evolutionChain[i][index].trade_species.name
+              }}</span>
+            </div>
+            <div
+              class="options "
+              v-if="evolutionChain[i][index].trigger_name === 'shed'"
+            >
+              <span class="text"
+                >Must have an empty slot in party + a Pokeball in the bag</span
+              >
+              <span class="value"></span>
+            </div>
           </div>
           <img
             :src="pok.sprites.other['official-artwork'].front_default"
@@ -100,7 +278,7 @@ export default {
           location: !evoDetails ? null : evoDetails.location,
           min_affection: !evoDetails ? null : evoDetails.min_affection,
           min_beauty: !evoDetails ? null : evoDetails.min_beauty,
-          min_happiness: !evoDetails ? null : evoDetails.min_happines,
+          min_happiness: !evoDetails ? null : evoDetails.min_happiness,
           needs_overworld_rain: !evoDetails
             ? null
             : evoDetails.needs_overworld_rain,
@@ -112,7 +290,6 @@ export default {
           time_of_day: !evoDetails ? null : evoDetails.time_of_day,
           trade_species: !evoDetails ? null : evoDetails.trade_species,
           trigger_name: !evoDetails ? null : evoDetails.trigger.name,
-          item: !evoDetails ? null : evoDetails.item,
         });
         if (numberOfEvolutions > 1) {
           for (let i = 0; i < numberOfEvolutions; i++) {
@@ -134,7 +311,9 @@ export default {
               held_item: !evoData.evolves_to[i]
                 ? null
                 : evoData.evolves_to[i].evolution_details[0].held_item,
-              item: !evoData.evolves_to[i] ? null : evoData.evolves_to[i].item,
+              item: !evoData.evolves_to[i]
+                ? null
+                : evoData.evolves_to[i].evolution_details[0].item,
               known_move: !evoData.evolves_to[i]
                 ? null
                 : evoData.evolves_to[i].evolution_details[0].known_move,
@@ -152,7 +331,7 @@ export default {
                 : evoData.evolves_to[i].evolution_details[0].min_beauty,
               min_happiness: !evoData.evolves_to[i]
                 ? null
-                : evoData.evolves_to[i].evolution_details[0].min_happines,
+                : evoData.evolves_to[i].evolution_details[0].min_happiness,
               needs_overworld_rain: !evoData.evolves_to[i]
                 ? false
                 : evoData.evolves_to[i].evolution_details[0]
@@ -176,9 +355,6 @@ export default {
               trigger_name: !evoData.evolves_to[i]
                 ? null
                 : evoData.evolves_to[i].evolution_details[0].trigger.name,
-              item: !evoData.evolves_to[i]
-                ? null
-                : evoData.evolves_to[i].evolution_details[0].item,
             });
           }
           let y = 0;
@@ -190,6 +366,7 @@ export default {
             const tempData = evoData.evolves_to[y].evolves_to[0];
             // console.log(tempData);
             const tempDetails = tempData?.evolution_details[0];
+            console.log(tempDetails);
             evoChain.push({
               evolution_number: index + 2,
               // name:
@@ -210,7 +387,7 @@ export default {
               location: !tempDetails ? null : tempDetails.location,
               min_affection: !tempDetails ? null : tempDetails.min_affection,
               min_beauty: !tempDetails ? null : tempDetails.min_beauty,
-              min_happiness: !tempDetails ? null : tempDetails.min_happines,
+              min_happiness: !tempDetails ? null : tempDetails.min_happiness,
               needs_overworld_rain: !tempDetails
                 ? null
                 : tempDetails.needs_overworld_rain,
@@ -222,7 +399,6 @@ export default {
               time_of_day: !tempDetails ? null : tempDetails.time_of_day,
               trade_species: !tempDetails ? null : tempDetails.trade_species,
               trigger_name: !tempDetails ? null : tempDetails.trigger.name,
-              item: !tempDetails ? null : tempDetails.item,
             });
             y += 1;
           }
@@ -257,6 +433,8 @@ export default {
     for (const [key, value] of Object.entries(tmp)) {
       finalArray.push(value);
     }
+
+    console.log(finalArray);
 
     this.evolutionChain = finalArray;
 
@@ -336,16 +514,35 @@ export default {
         .arrow {
           font-size: 7rem;
         }
-        .level-evolving {
+        .options {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          .evolution-level {
+          .value {
+            text-transform: capitalize;
             font-family: "Red Hat Mono", monospace !important;
             font-weight: 900;
             text-shadow: 0 0 0.8em cyan;
             background: linear-gradient(to right, #30cfd0 0%, #330867 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+          .male {
+            font-size: 1.6rem;
+            font-family: "Red Hat Mono", monospace !important;
+            font-weight: 900;
+            text-shadow: 0 0 0.8em cyan;
+            background: linear-gradient(to right, #30cfd0 0%, #330867 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+          .female {
+            font-size: 1.6rem;
+            font-family: "Red Hat Mono", monospace !important;
+            font-weight: 900;
+            text-shadow: 0 0 0.8em palevioletred;
+            background: linear-gradient(to right, #df81b0 0%, #911a5f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           }
