@@ -617,9 +617,20 @@ export default {
   .arrow-container {
     all: initial !important;
   }
-
+  span.value {
+    text-align: center !important;
+  }
+  .evol-col {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: center;
+  }
   .pokemon-container {
     margin-bottom: 0rem !important;
+    .tag {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
   }
 }
 </style>
