@@ -264,10 +264,15 @@ export default {
       const data = [...this.tempPoke];
       const temp = [];
       this.loading = true;
+      console.log(data);
       if (offset < data.length) {
         for (let i = start; i < offset; i++) {
-          const url1 = `https://pokeapi.co/api/v2/pokemon/${data[i].name}/`;
-          const url2 = `https://pokeapi.co/api/v2/pokemon-species/${data[i].name}/`;
+          const url1 = `https://pokeapi.co/api/v2/pokemon/${
+            data[i].url.split("/")[data[i].url.split("/").length - 2]
+          }`;
+          const url2 = `https://pokeapi.co/api/v2/pokemon-species/${
+            data[i].url.split("/")[data[i].url.split("/").length - 2]
+          }/`;
           promises1.push(fetch(url1).then((res) => res.json()));
           promises2.push(fetch(url2).then((res) => res.json()));
         }
@@ -298,8 +303,12 @@ export default {
         });
       } else {
         for (let i = start; i < data.length; i++) {
-          const url1 = `https://pokeapi.co/api/v2/pokemon/${data[i].name}/`;
-          const url2 = `https://pokeapi.co/api/v2/pokemon-species/${data[i].name}/`;
+          const url1 = `https://pokeapi.co/api/v2/pokemon/${
+            data[i].url.split("/")[data[i].url.split("/").length - 2]
+          }/`;
+          const url2 = `https://pokeapi.co/api/v2/pokemon-species/${
+            data[i].url.split("/")[data[i].url.split("/").length - 2]
+          }/`;
           promises1.push(fetch(url1).then((res) => res.json()));
           promises2.push(fetch(url2).then((res) => res.json()));
         }

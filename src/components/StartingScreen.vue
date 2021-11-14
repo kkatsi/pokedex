@@ -35,9 +35,30 @@
 </template>
 
 <script>
+import { gsap } from "gsap";
+
 export default {
   props: {
     loading: Boolean,
+  },
+  watch: {
+    loading: function(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        gsap.to(".upper-side", {
+          duration: 1,
+          ease: "power1.in",
+          transform: "translateY(-100%)",
+        });
+        gsap.to(".lower-side", {
+          duration: 1,
+          ease: "power1.in",
+          transform: "translateY(100%)",
+          onComplete: () => {
+            document.querySelector(".container").style.display = "none";
+          },
+        });
+      }
+    },
   },
 };
 </script>

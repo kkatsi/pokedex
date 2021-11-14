@@ -1,5 +1,5 @@
 <template>
-  <StartingScreen v-bind:loading="loading" />
+  <StartingScreen :loading="loading" />
   <Header />
   <router-view :key="$route.params" />
   <!-- <div id="nav">
@@ -12,7 +12,6 @@
 <script>
 import StartingScreen from "./components/StartingScreen.vue";
 import Header from "./components/Header.vue";
-import { gsap } from "gsap";
 
 export default {
   name: "App",
@@ -28,19 +27,6 @@ export default {
   mounted() {
     window.addEventListener("load", () => {
       this.loading = !this.loading;
-      gsap.to(".upper-side", {
-        duration: 1,
-        ease: "power1.in",
-        transform: "translateY(-100%)",
-      });
-      gsap.to(".lower-side", {
-        duration: 1,
-        ease: "power1.in",
-        transform: "translateY(100%)",
-        onComplete: () => {
-          document.querySelector(".container").style.display = "none";
-        },
-      });
     });
   },
 };

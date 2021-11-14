@@ -12,206 +12,235 @@
           v-for="(pok, index) in evolution"
           :key="index"
         >
-          <div class="arrow-container" v-show="i !== 0 && windowWidth > 750">
-            <div
-              class="options level-evolving"
-              v-if="
-                evolutionChain[i][index].min_level ||
-                  evolutionChain[i][index].trigger_name === 'shed'
-              "
-            >
-              <span class="text">Evolves at level</span>
-              <span class="value">{{
-                evolutionChain[i][index].min_level || 20
-              }}</span>
+          <router-link :to="`/${pok.name}`" class="router-link">
+            <div class="arrow-container">
+              <div
+                class="options level-evolving"
+                v-if="
+                  evolutionChain[i][index].min_level ||
+                    evolutionChain[i][index].trigger_name === 'shed'
+                "
+              >
+                <span class="text">Evolves at level</span>
+                <span class="value">{{
+                  evolutionChain[i][index].min_level || 20
+                }}</span>
+              </div>
+              <div
+                class="options gender-evolving"
+                v-if="evolutionChain[i][index].gender"
+              >
+                <span class="text">Must be</span>
+                <span class="value">
+                  <span
+                    v-if="evolutionChain[i][index].gender === 1"
+                    class="female"
+                    >♀</span
+                  >
+                  <span
+                    v-if="evolutionChain[i][index].gender === 2"
+                    class="male"
+                    >♂</span
+                  >
+                </span>
+              </div>
+              <div
+                class="options affection"
+                v-if="evolutionChain[i][index].min_affection"
+              >
+                <span class="text">Affection must be at least level</span>
+                <span class="value">{{
+                  evolutionChain[i][index].min_affection
+                }}</span>
+              </div>
+
+              <div
+                class="options "
+                v-if="evolutionChain[i][index].trigger_name === 'trade'"
+              >
+                <span class="text">Trade</span>
+                <span class="value"></span>
+              </div>
+              <img
+                src="../assets/Images/right-arrow.png"
+                alt=""
+                v-show="i !== 0 && windowWidth > 750"
+              />
+
+              <div
+                class="options held-item-evolving"
+                v-if="evolutionChain[i][index].held_item"
+              >
+                <span class="text">Must hold</span>
+                <span class="value">{{
+                  evolutionChain[i][index].held_item.name.replaceAll("-", " ")
+                }}</span>
+              </div>
+              <div class="options item" v-if="evolutionChain[i][index].item">
+                <span class="text">Use</span>
+                <span class="value">{{
+                  evolutionChain[i][index].item.name.replaceAll("-", " ")
+                }}</span>
+              </div>
+              <div
+                class="options known-move"
+                v-if="evolutionChain[i][index].known_move"
+              >
+                <span class="text">Must know</span>
+                <span class="value">{{
+                  evolutionChain[i][index].known_move.name.replaceAll("-", " ")
+                }}</span>
+              </div>
+              <div
+                class="options known-move-type"
+                v-if="evolutionChain[i][index].known_move_type"
+              >
+                <span class="text">Must knows a move of type</span>
+                <span class="value">{{
+                  evolutionChain[i][index].known_move_type.name.replaceAll(
+                    "-",
+                    " "
+                  )
+                }}</span>
+              </div>
+              <div
+                class="options location"
+                v-if="evolutionChain[i][index].location"
+              >
+                <span class="text">at</span>
+                <span class="value">{{
+                  evolutionChain[i][index].location.name.replaceAll("-", " ")
+                }}</span>
+              </div>
+              <div
+                class="options beauty"
+                v-if="evolutionChain[i][index].min_beauty"
+              >
+                <span class="text">Beauty must be at least</span>
+                <span class="value">{{
+                  evolutionChain[i][index].min_beauty
+                }}</span>
+              </div>
+              <div
+                class="options happiness"
+                v-if="evolutionChain[i][index].min_happiness"
+              >
+                <span class="text">Happiness must be at least</span>
+                <span class="value">{{
+                  evolutionChain[i][index].min_happiness
+                }}</span>
+              </div>
+              <div
+                class="options overworld_rain"
+                v-if="evolutionChain[i][index].needs_overworld_rain"
+              >
+                <span class="text">During rain</span>
+                <span class="value"></span>
+              </div>
+              <div
+                class="options party_species"
+                v-if="evolutionChain[i][index].party_species"
+              >
+                <span class="text">Player's party must have a</span>
+                <span class="value">{{
+                  evolutionChain[i][index].party_species.name
+                }}</span>
+              </div>
+              <div
+                class="options party_type"
+                v-if="evolutionChain[i][index].party_type"
+              >
+                <span class="text"
+                  >Player's party must have a pokemon of type</span
+                >
+                <span class="value">{{
+                  evolutionChain[i][index].party_type.name
+                }}</span>
+              </div>
+              <div
+                class="options stats"
+                v-if="
+                  evolutionChain[i][index].relative_physical_stats ||
+                    evolutionChain[i][index].relative_physical_stats === 0
+                "
+              >
+                <span class="text">
+                  <span
+                    v-if="
+                      evolutionChain[i][index].relative_physical_stats === 1
+                    "
+                    >IF Attack > Defence</span
+                  >
+                  <span
+                    v-else-if="
+                      evolutionChain[i][index].relative_physical_stats === -1
+                    "
+                    >IF Attack &#60; Defence</span
+                  >
+                  <span v-else>IF Attack = Defence</span>
+                </span>
+                <span class="value"></span>
+              </div>
+              <div
+                class="options day-time"
+                v-if="evolutionChain[i][index].time_of_day"
+              >
+                <span class="text">During</span>
+                <span class="value">{{
+                  evolutionChain[i][index].time_of_day
+                }}</span>
+              </div>
+              <div
+                class="options trade-species"
+                v-if="evolutionChain[i][index].trade_species"
+              >
+                <span class="text">Trading with</span>
+                <span class="value">{{
+                  evolutionChain[i][index].trade_species.name
+                }}</span>
+              </div>
+              <div
+                class="options "
+                v-if="evolutionChain[i][index].trigger_name === 'shed'"
+              >
+                <span class="text"
+                  >Must have an empty slot in party + a Pokeball in the
+                  bag</span
+                >
+                <span class="value"></span>
+              </div>
+              <div
+                class="options wurmple"
+                v-if="pok.name === 'silcoon' || pok.name === 'cascoon'"
+              >
+                <span class="text">Random</span>
+                <span class="value"></span>
+              </div>
             </div>
-            <div
-              class="options gender-evolving"
-              v-if="evolutionChain[i][index].gender"
+            <img
+              :src="pok.sprites.other['official-artwork'].front_default"
+              alt=""
+            />
+            <span
+              class="name"
+              :style="{
+                color: findColor(pok.types[0].type.name),
+                textShadow: `0 0 0.5em ${findColor(pok.types[0].type.name)}`,
+              }"
+              >{{ pok.name }}</span
             >
-              <span class="text">Must be</span>
-              <span class="value">
-                <span
-                  v-if="evolutionChain[i][index].gender === 1"
-                  class="female"
-                  >♀</span
-                >
-                <span v-if="evolutionChain[i][index].gender === 2" class="male"
-                  >♂</span
-                >
+            <div class="label-container">
+              <span
+                :key="type.slot"
+                v-for="type in pok.types"
+                name="tag"
+                class="tag"
+                :style="{ background: findColor(type.type.name) }"
+              >
+                {{ type.type.name }}
               </span>
             </div>
-            <div
-              class="options affection"
-              v-if="evolutionChain[i][index].min_affection"
-            >
-              <span class="text">Affection must be at least level</span>
-              <span class="value">{{
-                evolutionChain[i][index].min_affection
-              }}</span>
-            </div>
-
-            <div
-              class="options "
-              v-if="evolutionChain[i][index].trigger_name === 'trade'"
-            >
-              <span class="text">Trade</span>
-              <span class="value"></span>
-            </div>
-            <img src="../assets/Images/right-arrow.png" alt="" />
-
-            <div
-              class="options held-item-evolving"
-              v-if="evolutionChain[i][index].held_item"
-            >
-              <span class="text">Must hold</span>
-              <span class="value">{{
-                evolutionChain[i][index].held_item.name.replaceAll("-", " ")
-              }}</span>
-            </div>
-            <div class="options item" v-if="evolutionChain[i][index].item">
-              <span class="text">Use</span>
-              <span class="value">{{
-                evolutionChain[i][index].item.name.replaceAll("-", " ")
-              }}</span>
-            </div>
-            <div
-              class="options known-move"
-              v-if="evolutionChain[i][index].known_move"
-            >
-              <span class="text">Must know</span>
-              <span class="value">{{
-                evolutionChain[i][index].known_move.name.replaceAll("-", " ")
-              }}</span>
-            </div>
-            <div
-              class="options known-move-type"
-              v-if="evolutionChain[i][index].known_move_type"
-            >
-              <span class="text">Must knows a move of type</span>
-              <span class="value">{{
-                evolutionChain[i][index].known_move_type.name.replaceAll(
-                  "-",
-                  " "
-                )
-              }}</span>
-            </div>
-            <div
-              class="options location"
-              v-if="evolutionChain[i][index].location"
-            >
-              <span class="text">at</span>
-              <span class="value">{{
-                evolutionChain[i][index].location.name.replaceAll("-", " ")
-              }}</span>
-            </div>
-            <div
-              class="options beauty"
-              v-if="evolutionChain[i][index].min_beauty"
-            >
-              <span class="text">Beauty must be at least</span>
-              <span class="value">{{
-                evolutionChain[i][index].min_beauty
-              }}</span>
-            </div>
-            <div
-              class="options happiness"
-              v-if="evolutionChain[i][index].min_happiness"
-            >
-              <span class="text">Happiness must be at least</span>
-              <span class="value">{{
-                evolutionChain[i][index].min_happiness
-              }}</span>
-            </div>
-            <div
-              class="options overworld_rain"
-              v-if="evolutionChain[i][index].needs_overworld_rain"
-            >
-              <span class="text">During rain</span>
-              <span class="value"></span>
-            </div>
-            <div
-              class="options party_species"
-              v-if="evolutionChain[i][index].party_species"
-            >
-              <span class="text">Player's party must have a</span>
-              <span class="value">{{
-                evolutionChain[i][index].party_species.name
-              }}</span>
-            </div>
-            <div
-              class="options party_type"
-              v-if="evolutionChain[i][index].party_type"
-            >
-              <span class="text"
-                >Player's party must have a pokemon of type</span
-              >
-              <span class="value">{{
-                evolutionChain[i][index].party_type.name
-              }}</span>
-            </div>
-            <div
-              class="options stats"
-              v-if="
-                evolutionChain[i][index].relative_physical_stats ||
-                  evolutionChain[i][index].relative_physical_stats === 0
-              "
-            >
-              <span class="text">
-                <span
-                  v-if="evolutionChain[i][index].relative_physical_stats === 1"
-                  >IF Attack > Defence</span
-                >
-                <span
-                  v-else-if="
-                    evolutionChain[i][index].relative_physical_stats === -1
-                  "
-                  >IF Attack &#60; Defence</span
-                >
-                <span v-else>IF Attack = Defence</span>
-              </span>
-              <span class="value"></span>
-            </div>
-            <div
-              class="options day-time"
-              v-if="evolutionChain[i][index].time_of_day"
-            >
-              <span class="text">During</span>
-              <span class="value">{{
-                evolutionChain[i][index].time_of_day
-              }}</span>
-            </div>
-            <div
-              class="options trade-species"
-              v-if="evolutionChain[i][index].trade_species"
-            >
-              <span class="text">Trading with</span>
-              <span class="value">{{
-                evolutionChain[i][index].trade_species.name
-              }}</span>
-            </div>
-            <div
-              class="options "
-              v-if="evolutionChain[i][index].trigger_name === 'shed'"
-            >
-              <span class="text"
-                >Must have an empty slot in party + a Pokeball in the bag</span
-              >
-              <span class="value"></span>
-            </div>
-          </div>
-          <img
-            :src="pok.sprites.other['official-artwork'].front_default"
-            alt=""
-          />
-          <span
-            class="name"
-            :style="{
-              color: findColor(pok.types[0].type.name),
-              textShadow: `0 0 0.5em ${findColor(pok.types[0].type.name)}`,
-            }"
-            >{{ pok.name }}</span
-          >
+          </router-link>
         </div>
       </div>
     </div>
@@ -473,6 +502,7 @@ export default {
 <style lang="scss" scoped>
 .evolutions {
   min-height: 500px;
+  padding-bottom: 3rem;
   .title {
     font-size: 2rem;
     font-weight: 800;
@@ -486,6 +516,12 @@ export default {
       align-items: center;
       justify-content: center;
     }
+    .router-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
     .pokemon-container {
       margin: 2.5rem;
       display: flex;
@@ -493,6 +529,10 @@ export default {
       align-items: center;
       justify-content: center;
       position: relative;
+      a {
+        text-decoration: none;
+        color: #2c3e50;
+      }
       img {
         max-width: 100%;
       }
@@ -548,7 +588,38 @@ export default {
           }
         }
       }
+
+      .label-container {
+        display: flex;
+        flex-wrap: wrap;
+        padding-top: 1rem;
+        align-items: center;
+        justify-content: space-around;
+        margin-top: auto;
+        width: 100%;
+        .tag {
+          min-width: 45%;
+          color: whitesmoke;
+          font-size: 1rem;
+          font-weight: 900;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          text-transform: capitalize;
+        }
+      }
     }
+  }
+}
+@media (max-width: 750px) {
+  .evolutions .row {
+    margin: 0.5rem 0 !important;
+  }
+  .arrow-container {
+    all: initial !important;
+  }
+
+  .pokemon-container {
+    margin-bottom: 0rem !important;
   }
 }
 </style>

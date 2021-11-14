@@ -1,10 +1,11 @@
 <template>
   <div class="pokemon" style="overflowX:hidden">
-    <div class="electric" v-show="showNow">
-      <img src="../assets/Images/1.png" alt="" class="thunder" />
-
-      <img src="../assets/Images/2.png" alt="" class="thunder" />
-    </div>
+    <Background
+      v-if="pokemon"
+      v-show="showNow"
+      :showNow="showNow"
+      :type="pokemon.types[0].type.name"
+    />
 
     <img
       :src="pokemon.sprites.other['official-artwork'].front_default"
@@ -25,9 +26,15 @@
       <Evolutions :pokemon="pokemon" :findColor="findColor" />
     </div>
 
-    <button class="animation-skip" v-if="!showNow" @click="stopAnimation">
+    <button
+      class="animation-skip"
+      v-if="!showNow && pokemon"
+      @click="stopAnimation"
+    >
       Skip Animations
     </button>
+
+    <starting-screen v-if="!pokemon" :loading="!pokemon"></starting-screen>
 
     <div class="pokeball-container">
       <picture>
@@ -39,6 +46,50 @@
       </picture>
     </div>
     <img src="../assets/Images/flash.png" alt="flash" class="flash-image" />
+
+    <router-link
+      :to="`/${pokemon.id - 1}`"
+      v-if="pokemon?.id > 1"
+      class="arrow left"
+    >
+      <svg width="60px" height="80px" viewBox="0 0 50 80" xml:space="preserve">
+        <polyline
+          fill="none"
+          stroke="#2c3e50"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="
+  45.63,75.8 0.375,38.087 45.63,0.375 "
+        />
+      </svg>
+      <span class="prev">Previous</span>
+    </router-link>
+    <router-link
+      :to="`/${pokemon.id + 1}`"
+      v-if="pokemon?.id <= 1118"
+      class="arrow right"
+    >
+      <span class="next">Next</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        width="60px"
+        height="80px"
+        viewBox="0 0 50 80"
+        xml:space="preserve"
+      >
+        <polyline
+          fill="none"
+          stroke="#2c3e50"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="
+  0.375,0.375 45.63,38.087 0.375,75.8 "
+        />
+      </svg>
+    </router-link>
   </div>
 </template>
 
@@ -48,6 +99,8 @@ import PokemonInfo from "../components/PokemonInfo.vue";
 import Stats from "../components/Stats.vue";
 import Effectiveness from "../components/Effectiveness.vue";
 import Evolutions from "../components/Evolutions.vue";
+import Background from "../components/Background.vue";
+import StartingScreen from "../components/StartingScreen.vue";
 var tlBasicAnimation;
 var timeout;
 
@@ -63,6 +116,8 @@ export default {
     Stats,
     Effectiveness,
     Evolutions,
+    Background,
+    StartingScreen,
   },
   methods: {
     animateELements() {
@@ -208,27 +263,34 @@ export default {
     // },
     async getPokemon(name) {
       const promises1 = [];
-      const promises2 = [];
+      // const promises2 = [];
       // this.loading = true;
 
       const url1 = `https://pokeapi.co/api/v2/pokemon/${name}`;
-      const url2 = `https://pokeapi.co/api/v2/pokemon-species/${name}/`;
+
       promises1.push(fetch(url1).then((res) => res.json()));
-      promises2.push(fetch(url2).then((res) => res.json()));
 
-      Promise.all(promises1).then((results) => {
-        Promise.all(promises2)
-          .then((res) => {
-            results[0].speciesDetails = res[0];
-            console.log(results[0]);
+      Promise.all(promises1)
+        .then((results) => {
+          const url2 = results[0].species.url;
+          Promise.all([fetch(url2).then((res) => res.json())])
+            .then((res) => {
+              console.log(res);
+              results[0].speciesDetails = res[0];
+              console.log(results[0]);
 
-            this.pokemon = results[0];
-          })
-          .catch((err) => {
-            this.pokemon = results[0];
-            console.log(err);
-          });
-      });
+              this.pokemon = results[0];
+            })
+            .catch((err) => {
+              this.pokemon = results[0];
+              this.$router.push("/error/404");
+
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          this.$router.push("/error/404");
+        });
     },
   },
   updated() {
@@ -249,26 +311,71 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@300;400;500;600;700&display=swap");
 
 .pokemon {
-  .electric {
-    height: 100%;
-    width: 100%;
+  svg {
+    width: 50px;
+    height: 70px;
+  }
+
+  .arrow {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
     display: flex;
     justify-content: center;
     align-items: center;
-    .thunder {
-      width: 33%;
-      height: auto;
-      position: absolute;
-      top: 0;
-      z-index: -1;
-      &:first-child {
-        left: 0;
-      }
-      &:last-child {
-        right: 0;
-      }
+    text-decoration: none !important;
+    color: #2c3e50;
+    .prev,
+    .next {
     }
   }
+
+  .left {
+    left: 20px;
+  }
+
+  .right {
+    right: 20px;
+  }
+  @media (max-width: 700px) {
+    svg {
+      width: 20px;
+      height: 40px;
+    }
+    .left {
+      left: 5px;
+    }
+    .right {
+      right: 5px;
+    }
+  }
+
+  .left:hover polyline,
+  .left:focus polyline {
+    stroke-width: 3;
+  }
+
+  .left:active polyline {
+    stroke-width: 6;
+    transition: all 100ms ease-in-out;
+  }
+
+  .right:hover polyline,
+  .right:focus polyline {
+    stroke-width: 3;
+  }
+
+  .right:active polyline {
+    stroke-width: 6;
+    transition: all 100ms ease-in-out;
+  }
+
+  polyline {
+    transition: all 250ms ease-in-out;
+  }
+
   img.pokemon-image {
     position: absolute;
     opacity: 0;

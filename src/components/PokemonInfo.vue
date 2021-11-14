@@ -29,7 +29,7 @@
           >
             <span :class="{ hidden: ability.is_hidden, ability: true }">
               {{ !ability.is_hidden ? index + 1 + ". " : "" }}
-              {{ ability.ability.name.replace("-", " ") }}
+              {{ ability.ability.name.replaceAll("-", " ") }}
             </span>
             <info-toast
               :ability="ability"
@@ -95,7 +95,7 @@
       <div class="col-6 level-rate">
         <label for="level">Levelling Rate</label>
         <span name="level" class="level">{{
-          pokemon.speciesDetails?.growth_rate.name.replace("-", " ") || "??"
+          pokemon.speciesDetails?.growth_rate.name.replaceAll("-", " ") || "??"
         }}</span>
       </div>
       <div class="col-12 types">
