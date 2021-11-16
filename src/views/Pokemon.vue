@@ -1,12 +1,11 @@
 <template>
+  <Background
+    v-if="pokemon"
+    v-show="showNow"
+    :showNow="showNow"
+    :type="pokemon.types[0].type.name"
+  />
   <div class="pokemon" style="overflowX:hidden">
-    <Background
-      v-if="pokemon"
-      v-show="showNow"
-      :showNow="showNow"
-      :type="pokemon.types[0].type.name"
-    />
-
     <img
       :src="pokemon.sprites.other['official-artwork'].front_default"
       :alt="pokemon.name"
@@ -329,6 +328,7 @@ export default {
     color: #2c3e50;
     .prev,
     .next {
+      font-weight: bold;
     }
   }
 
