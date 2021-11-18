@@ -542,11 +542,11 @@ export default {
         text-transform: capitalize;
       }
       .arrow-container {
-        width: 32%;
+        width: 30%;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        left: -35%;
+        left: -33%;
         display: flex;
         flex-direction: column;
         align-items: center;
