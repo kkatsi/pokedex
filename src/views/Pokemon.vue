@@ -10,6 +10,7 @@
       :src="pokemon.sprites.other['official-artwork'].front_default"
       :alt="pokemon.name"
       class="pokemon-image"
+      ref="pokemon"
       v-if="pokemon"
     />
 
@@ -19,6 +20,7 @@
         :findColor="findColor"
         class="cont-lg"
         style="padding:0 .3rem"
+        ref="info"
       />
       <Stats :findColor="findColor" :pokemon="pokemon" />
       <Effectiveness :pokemon="pokemon" :findColor="findColor" />
@@ -41,6 +43,7 @@
           src="../assets/Images/pokeball.png"
           class="pokeball"
           alt="pokeball"
+          ref="pokeball"
         />
       </picture>
     </div>
@@ -100,14 +103,13 @@ import Effectiveness from "../components/Effectiveness.vue";
 import Evolutions from "../components/Evolutions.vue";
 import Background from "../components/Background.vue";
 import StartingScreen from "../components/StartingScreen.vue";
-var tlBasicAnimation;
-var timeout;
 
 export default {
   data() {
     return {
       showNow: false,
       pokemon: null,
+      tlBasicAnimation: "",
     };
   },
   components: {
@@ -118,6 +120,11 @@ export default {
     Background,
     StartingScreen,
   },
+  // watch: {
+  //   pokemon: function(newValue, oldValue) {
+  //     if (newValue !== oldValue);
+  //   },
+  // },
   methods: {
     animateELements() {
       if (!this.showNow) return;
@@ -130,16 +137,23 @@ export default {
       });
     },
     pokeballAndPokemonAnimation() {
+      console.log("in");
+      console.log(this.pokemon, this.showNow);
       if (!this.pokemon) return;
       if (this.showNow) return;
       // timeout = setTimeout(() => {
       // }, 3900);
-      const pokeball = document.querySelector(".pokeball-container img");
-      const pokemon = document.querySelector(".pokemon-image");
-      const info = document.querySelector(".pokemon-basic-info");
+      // const pokeball = document.querySelector(".pokeball-container img");
+      const pokeball = this.$refs.pokeball;
+      // const pokemon = document.querySelector(".pokemon-image");
+      const pokemon = this.$refs.pokemon;
+      const info = this.$refs.info;
+
+      console.log(pokemon);
+
       console.log(info);
 
-      tlBasicAnimation = gsap.timeline();
+      const tlBasicAnimation = gsap.timeline();
       tlBasicAnimation.delay(0.5);
       tlBasicAnimation.endTime() === 1;
       tlBasicAnimation
@@ -185,11 +199,11 @@ export default {
           opacity: 0,
           ease: "Expo.easeOut",
         });
+      this.tlBasicAnimation = tlBasicAnimation;
     },
     stopAnimation() {
       this.showNow = true;
-      tlBasicAnimation.progress(1).pause();
-      clearTimeout(timeout);
+      this.tlBasicAnimation.progress(1).pause();
     },
 
     findColor(type) {
@@ -254,12 +268,6 @@ export default {
       }
       return result;
     },
-    // async getPokemon(name) {
-    //   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    //   const data = await res.json();
-    //   console.log(data);
-    //   this.pokemon = data;
-    // },
     async getPokemon(name) {
       const promises1 = [];
       // const promises2 = [];
@@ -297,9 +305,11 @@ export default {
   },
   async created() {
     await this.getPokemon(this.$route.params.pokeName);
+    // this.pokeballAndPokemonAnimation();
   },
   mounted() {
     this.$nextTick(() => {
+      // this.pokeballAndPokemonAnimation();
       // Okay, now that everything is destroyed, lets build it up again
     });
   },
