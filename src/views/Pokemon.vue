@@ -47,7 +47,12 @@
         />
       </picture>
     </div>
-    <img src="../assets/Images/flash.png" alt="flash" class="flash-image" />
+    <img
+      src="../assets/Images/flash.png"
+      alt="flash"
+      class="flash-image"
+      ref="flash"
+    />
 
     <router-link
       :to="`/${pokemon.id - 1}`"
@@ -166,8 +171,7 @@ export default {
           duration: 0.5,
           opacity: 0,
           onComplete: () => {
-            if (!this.showNow)
-              document.querySelector(".flash-image")?.classList.add("flash");
+            if (!this.showNow) this.$refs.flash.classList.add("flash");
           },
         })
         .to(
@@ -180,7 +184,7 @@ export default {
             // onCompleteParams: [this.showNow],
             onComplete: () => {
               this.showNow = true;
-              document.querySelector(".flash-image").style.display = "none";
+              this.$refs.flash.style.display = "none";
               document
                 .querySelectorAll(".electric img")[0]
                 ?.classList.add("flashThunder");
