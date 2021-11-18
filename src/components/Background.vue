@@ -43,6 +43,9 @@
   <div class="background graveyard" v-show="showNow" v-if="type === 'ghost'">
     <img src="../assets/Images/graveyard.png" alt="" class="graveyard" />
   </div>
+  <div class="background dark" v-show="showNow" v-if="type === 'dark'">
+    <img src="../assets/Images/dark.png" alt="" class="dark" />
+  </div>
 </template>
 
 <script>
@@ -166,6 +169,14 @@ export default {
     left: 0;
     z-index: -1;
   }
+  &.dark {
+    width: 100%;
+    max-width: 100vw;
+    position: absolute;
+    bottom: 280px;
+    left: 0;
+    z-index: -1;
+  }
   &:after {
     content: "";
     position: absolute;
@@ -204,6 +215,10 @@ export default {
     bottom: 450px !important;
   }
   .background.sky {
+    bottom: initial;
+    top: 0;
+  }
+  .background.dark {
     bottom: initial;
     top: 0;
   }
