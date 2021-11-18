@@ -54,7 +54,7 @@
       <svg width="60px" height="80px" viewBox="0 0 50 80" xml:space="preserve">
         <polyline
           fill="none"
-          stroke="#2c3e50"
+          stroke="white"
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -80,7 +80,7 @@
       >
         <polyline
           fill="none"
-          stroke="#2c3e50"
+          stroke="white"
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -325,7 +325,7 @@ export default {
     justify-content: center;
     align-items: center;
     text-decoration: none !important;
-    color: #2c3e50;
+    color: white;
     .prev,
     .next {
       font-weight: bold;
