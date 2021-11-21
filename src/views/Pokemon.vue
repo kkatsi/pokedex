@@ -62,7 +62,14 @@
       <svg width="60px" height="80px" viewBox="0 0 50 80" xml:space="preserve">
         <polyline
           fill="none"
-          :stroke="pokemon.types[0].type.name === 'poison' ? 'black' : 'white'"
+          :stroke="
+            pokemon.types[0].type.name === 'poison' ||
+            pokemon.types[0].type.name === 'normal' ||
+            pokemon.types[0].type.name === 'steel' ||
+            pokemon.types[0].type.name === 'fairy'
+              ? 'black'
+              : 'white'
+          "
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -73,7 +80,13 @@
       <span
         class="prev"
         :style="{
-          color: pokemon.types[0].type.name === 'poison' ? 'black' : 'white',
+          color:
+            pokemon.types[0].type.name === 'poison' ||
+            pokemon.types[0].type.name === 'normal' ||
+            pokemon.types[0].type.name === 'steel' ||
+            pokemon.types[0].type.name === 'fairy'
+              ? 'black'
+              : 'white',
         }"
         >Previous</span
       >
@@ -86,7 +99,13 @@
       <span
         class="next"
         :style="{
-          color: pokemon.types[0].type.name === 'poison' ? 'black' : 'white',
+          color:
+            pokemon.types[0].type.name === 'poison' ||
+            pokemon.types[0].type.name === 'normal' ||
+            pokemon.types[0].type.name === 'steel' ||
+            pokemon.types[0].type.name === 'fairy'
+              ? 'black'
+              : 'white',
         }"
         >Next</span
       >
@@ -100,7 +119,14 @@
       >
         <polyline
           fill="none"
-          :stroke="pokemon.types[0].type.name === 'poison' ? 'black' : 'white'"
+          :stroke="
+            pokemon.types[0].type.name === 'poison' ||
+            pokemon.types[0].type.name === 'normal' ||
+            pokemon.types[0].type.name === 'steel' ||
+            pokemon.types[0].type.name === 'fairy'
+              ? 'black'
+              : 'white'
+          "
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
