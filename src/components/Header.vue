@@ -17,6 +17,7 @@
 .container {
   position: relative;
   width: 100%;
+  z-index: 999999999;
 
   a {
     text-decoration: none;
@@ -27,7 +28,6 @@
     font-family: Pokemon !important;
     margin: 0;
     letter-spacing: 0px;
-    z-index: 99;
     // @include stroke(4, #25348a);
     // text-shadow: -1px 0 black, 0 3px black, 3px 0 black, 0 -1px black;
     // color: #feca1b;
