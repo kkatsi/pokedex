@@ -9,8 +9,10 @@
           class="col-xs-12 col-md-6 col-xl-4 col-xxl-3 card"
         >
           <router-link
+            @click="registerToLocalStorage(pokemon.id)"
             :to="`/${pokemon.name}`"
             v-if="index === pokemons.length - 1"
+            :id="pokemon.id"
           >
             <div class="card-container" ref="scrollTrigger" id="scroll-trigger">
               <img
@@ -49,7 +51,12 @@
               </div>
             </div>
           </router-link>
-          <router-link :to="`/${pokemon.name}`" v-else>
+          <router-link
+            @click="registerToLocalStorage(pokemon.id)"
+            :to="`/${pokemon.name}`"
+            :id="pokemon.id"
+            v-else
+          >
             <div class="card-container">
               <img
                 :src="pokemon.sprites.other['official-artwork'].front_default"
@@ -118,6 +125,7 @@ export default {
       perPage: 20,
       loading: false,
       limit: 1118,
+      savedID: null,
     };
   },
   methods: {
@@ -203,11 +211,13 @@ export default {
       trigger && observer.observe(trigger);
     },
     async getMorePokemons(page, perPage) {
+      console.log(page);
       const promises1 = [];
       const promises2 = [];
       const temp = [];
       const offset = perPage * page;
-      const start = offset - perPage + 1;
+      const start = !this.savedID ? offset - perPage + 1 : 1;
+
       this.loading = true;
       for (let i = start; i <= offset; i++) {
         const url1 = `https://pokeapi.co/api/v2/pokemon/${i}/`;
@@ -377,9 +387,19 @@ export default {
         });
       });
     },
+    registerToLocalStorage(id) {
+      localStorage.setItem("pokemonID", id);
+    },
   },
 
   async created() {
+    window.addEventListener("beforeunload", function() {
+      this.scrollTo(0, 0);
+    });
+    const savedPokemonID = localStorage.getItem("pokemonID");
+    console.log(savedPokemonID);
+    this.savedID = savedPokemonID;
+    this.page = Math.ceil(Number(this.savedID) / this.perPage) || 1;
     await this.getMorePokemons(this.page, this.perPage);
   },
   destroyed() {
@@ -388,10 +408,18 @@ export default {
   updated() {
     this.styleAndAnimateCards();
     this.scrollTrigger();
+    if (this.savedID) {
+      document.getElementById(this.savedID).scrollIntoView();
+      localStorage.removeItem("pokemonID");
+      this.savedID = null;
+    }
   },
   mounted() {
     window.addEventListener("load", () => {
       this.styleAndAnimateCards();
+    });
+    this.$nextTick(() => {
+      window.scrollTo(0, 0);
     });
   },
 };

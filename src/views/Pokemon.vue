@@ -62,7 +62,7 @@
       <svg width="60px" height="80px" viewBox="0 0 50 80" xml:space="preserve">
         <polyline
           fill="none"
-          stroke="white"
+          :stroke="pokemon.types[0].type.name === 'poison' ? 'black' : 'white'"
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -70,14 +70,26 @@
   45.63,75.8 0.375,38.087 45.63,0.375 "
         />
       </svg>
-      <span class="prev">Previous</span>
+      <span
+        class="prev"
+        :style="{
+          color: pokemon.types[0].type.name === 'poison' ? 'black' : 'white',
+        }"
+        >Previous</span
+      >
     </router-link>
     <router-link
       :to="`/${pokemon.id + 1}`"
       v-if="pokemon?.id <= 1118"
       class="arrow right"
     >
-      <span class="next">Next</span>
+      <span
+        class="next"
+        :style="{
+          color: pokemon.types[0].type.name === 'poison' ? 'black' : 'white',
+        }"
+        >Next</span
+      >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -88,7 +100,7 @@
       >
         <polyline
           fill="none"
-          stroke="white"
+          :stroke="pokemon.types[0].type.name === 'poison' ? 'black' : 'white'"
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -171,7 +183,8 @@ export default {
           duration: 0.5,
           opacity: 0,
           onComplete: () => {
-            if (!this.showNow) this.$refs.flash.classList.add("flash");
+            if (!this.showNow && this.$refs.flash)
+              this.$refs.flash.classList.add("flash");
           },
         })
         .to(
@@ -184,7 +197,7 @@ export default {
             // onCompleteParams: [this.showNow],
             onComplete: () => {
               this.showNow = true;
-              this.$refs.flash.style.display = "none";
+              if (this.$refs.flash) this.$refs.flash.style.display = "none";
               document
                 .querySelectorAll(".electric img")[0]
                 ?.classList.add("flashThunder");

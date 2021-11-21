@@ -104,8 +104,8 @@ export default {
 .cont {
   position: absolute;
   left: 0;
-  top: 199px;
-  height: 380px;
+  top: 0;
+  height: 550px;
   min-width: 100%;
   padding: 0;
 
@@ -249,7 +249,7 @@ export default {
 
 @media (max-width: 550px) {
   .cont {
-    height: 180px;
+    height: 475px;
   }
   .background.fire {
     bottom: 0 !important;
@@ -276,12 +276,10 @@ export default {
     bottom: 0 !important;
   }
   .background.sky {
-    bottom: 0al;
-    top: 0;
+    bottom: 0;
   }
   .background.dark {
-    bottom: 0al;
-    top: 0;
+    bottom: 0;
   }
   .background.graveyard {
     bottom: 0 !important;
