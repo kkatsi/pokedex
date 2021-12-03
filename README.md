@@ -1,5 +1,4 @@
-# Flashsend
-
+# Pokedex
 This is a Vue.js app implementing a classic Pokedex from Pokemon world. Its a tool that gives you information about each pokemon.  General information about it's characteristics, statistics, evolutions. Enriched with some animations and fancy colors.  
 The app is live [here](https://simplepokedex.netlify.app/)!
 
